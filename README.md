@@ -107,11 +107,11 @@ Protótipos das interfaces e primeiros testes de coleta de dados comportamentais
 
 ## 👥 Equipe
 
-**Brenda Mellory Mitto** 
-**Érika Fedrigo** 
-**Gabriel Fleischmann Funck**
-**Luísa Machado Wentz** 
-**Luiza Fioravante Regina Soares** 
-**Luiza Rodrigues Saquette** 
+**Brenda Mellory Mitto**,  
+**Érika Fedrigo**,  
+**Gabriel Fleischmann Funck**, 
+**Luísa Machado Wentz**,  
+**Luiza Fioravante Regina Soares**,  
+**Luiza Rodrigues Saquette**  
 
 ---
