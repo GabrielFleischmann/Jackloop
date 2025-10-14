@@ -109,7 +109,7 @@ Protótipos das interfaces e primeiros testes de coleta de dados comportamentais
 
 **Brenda Mellory Mitto**,  
 **Érika Fedrigo**,  
-**Gabriel Fleischmann Funck**, 
+**Gabriel Fleischmann Funck**,  
 **Luísa Machado Wentz**,  
 **Luiza Fioravante Regina Soares**,  
 **Luiza Rodrigues Saquette**  
