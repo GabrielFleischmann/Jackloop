@@ -205,3 +205,31 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# Node modules
+frontend/node_modules/
+
+# Build outputs
+frontend/build/
+frontend/dist/
+frontend/out/
+
+# Logs
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/pnpm-debug.log*
+
+# Environment variables
+frontend/.env
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/.env.local
+
+# TypeScript build info
+frontend/*.tsbuildinfo
+
+# Editor and OS junk files
+frontend/.DS_Store
+frontend/Thumbs.db
