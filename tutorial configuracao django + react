@@ -15,22 +15,20 @@ conda install pip
 
 pip install python-decouple
 
-pip install "django==4.2.11"
+pip install django
 
-pip install "oracledb==1.4.0"
+pip install oracledb==3.3
  para instalação do oracle db é necessário baixar kit de dev C++ do visual studio
 
 conda install Pillow
 
-pip install "djangorestframework==3.14.0"
+pip install djangorestframework
 
 pip install markdown
 
 pip install django-filter
 
-- Configuração do Django
-
-django-admin startproject nome_do_projeto_que_voce_escolher (nome esta backend)
+pip install django-cors-headers
 
 - Configuração do React
 
