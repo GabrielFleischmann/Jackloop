@@ -1,0 +1,46 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background-color: #222;
+}
+
+.navbar-logo {
+  height: 75px;
+  margin-left: 15px;
+}
+
+.navbar-buttons{
+  display: flex;
+  gap: 10px;
+  padding-right: 10px;
+}
+
+.button-registrer{
+  height: 45px;
+  width: 140px;
+  border: 2px solid #929292;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color:#FFFFFF;
+  background-color: #372258;
+}
+
+.button-login{
+  height: 45px;
+  width: 80px;
+  border: 2px solid #929292;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color:#FFFFFF;
+  background-color: #202020;
+}

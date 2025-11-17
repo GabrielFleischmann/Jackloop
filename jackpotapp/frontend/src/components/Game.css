@@ -1,0 +1,36 @@
+.thumbnail-shape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 270px;
+  width: 240px;
+  border-radius: 20px;
+  border: 2px solid #FFAB4C;
+  background-color: #202020;
+}
+
+.thumbnail-image {
+  height: 100px; 
+  width: 80px;
+}
+
+.thumbnail-line {
+  width: 100%;
+  height: 1px;
+  background-color: #7147B1;
+  margin-top: 180px; 
+}
+
+.game-button{
+  height: 45px;
+  width: 220px;
+  margin-bottom: 10px;
+  border: 2px solid #FFAB4C;
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color:#FFBC55;
+  background-color: #372258;
+  margin-top: auto;
+}
