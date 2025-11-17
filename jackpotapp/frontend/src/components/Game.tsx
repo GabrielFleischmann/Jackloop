@@ -1,16 +1,23 @@
 import "./Game.css";
+import { Link } from "react-router-dom";
 
-export default function Game() {
+interface GameProps {
+  image: string;
+  route: string;
+}
+
+export default function Game({ image, route }: GameProps){
   return (
     <>
      <div className="thumbnail-shape">
-        <div className="thumnail-image">
-          <img src="caminho/da/imagem.jpg" alt="Thumbnail do jogo"></img>
+        <div className="thumbnail-image">
+          <img src={image} alt="Thumbnail do jogo"/>
         </div>
-
-        <div className="thumbnail-line"></div>
        
-        <button className="game-button">JOGAR</button>
+        <Link to={route}>
+          <button className="game-button">JOGAR</button>
+        </Link>
+
      </div>
     </>
   );

@@ -1,11 +1,18 @@
-import React from "react";
 import "./GamesPage.css";
 import Game from "../../src/components/Game";
+import MainGameThumbnail from "../../src/assets/Thumbnails/MainGameThumbnail.svg"
 
 export default function GamesPage() {
   return (
-    <div className="games-page">
-      <Game />
-    </div>
+    <>
+      <div className="title-container">
+        <h1>Lista de Jogos</h1>
+      </div>
+
+       <div className="games-list">
+        <Game image={MainGameThumbnail} route="/jogoPrincipal" />
+        <Game image="/assets/thumb2.png" route="/jogoExtra" />
+      </div>
+    </>
   );
 }
