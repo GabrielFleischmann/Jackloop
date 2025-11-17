@@ -10,14 +10,14 @@ body {
   width: 100vh;
   font-family: "Inter", sans-serif;
   color: #ffffff;
+  overflow: hidden;
+  padding-top: 60px;
 }
 
 .main-area {
-  flex: 1;
-  margin-top: 60px;
   margin-left: 200px;
-  display: block;
-  width: calc(100% - 200px);
+  display: flex;
+  width: calc(100vw - 200px);
   height: calc(100vh - 60px);
-  position: absolute;
+  position: relative;
 }

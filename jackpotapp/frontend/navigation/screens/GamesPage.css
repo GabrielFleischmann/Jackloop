@@ -1,6 +1,7 @@
 .title-container {
   width: 100%;
-  display: flex;
+  top: 60px;
+  position: fixed;
   padding-top: 3px;
   padding-left: 30px;
 }
@@ -9,12 +10,15 @@
   color: #ffffff;
   margin-top: 20px;
   margin-bottom: 30px;
+  padding-top: 10px;
 }
 
 .games-list {
-  margin-top: 10px;
+  flex: 1;
+  margin-top: 90px;
   padding-left: 30px;
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  overflow-y: auto;
 }
