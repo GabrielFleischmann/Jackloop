@@ -10,8 +10,8 @@ export default function GamesPage() {
       </div>
 
        <div className="games-list">
-        <Game image={MainGameThumbnail} route="/jogoPrincipal" />
-        <Game image="/assets/thumb2.png" route="/jogoExtra" />
+        <Game image={MainGameThumbnail} route="/main-game" />
+        <Game image="/assets/thumb2.png" route="/extra-game" />
       </div>
     </>
   );

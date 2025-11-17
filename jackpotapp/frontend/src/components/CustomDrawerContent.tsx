@@ -15,7 +15,7 @@ export default function CustomDrawerContent() {
           </Link>
           
           {/* Item 2: Sobre Nós */}
-          <Link to="/sobre" className="sidebar-item bottom-item">
+          <Link to="/about" className="sidebar-item bottom-item">
             <img src={InfoIcon} alt="Informações" className="sidebar-icon" />
             <p>Sobre nós</p>
           </Link>

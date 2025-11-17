@@ -9,6 +9,8 @@ import NavBar from './components/NavBar'
 // Telas
 import GamesPage from '../navigation/screens/GamesPage';
 import AboutPage from '../navigation/screens/AboutPage';
+import MainGame from '../navigation/screens/MainGame';
+import ExtraGame from '../navigation/screens/ExtraGame';
 
 function App() {
   return (
@@ -20,9 +22,10 @@ function App() {
         <Routes>
           <Route path="/" element={<GamesPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/main-game" element={<MainGame/>} />
+          <Route path="/extra-game" element={<ExtraGame/>} />
         </Routes>
       </div>
-
     </div>
   );
 }
