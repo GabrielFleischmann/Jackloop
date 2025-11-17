@@ -54,5 +54,6 @@ Acesse a pasta do front-end pelo terminal:
 ```bash
 cd jackpotapp
 cd frontend
+npm install
 npm run dev
 ```
