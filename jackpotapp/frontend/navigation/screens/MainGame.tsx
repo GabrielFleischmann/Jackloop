@@ -12,14 +12,13 @@ function randIndexForLength(len: number) {
 
 export default function MainGame() {
   const [symbols, setSymbols] = useState<SymbolDef[] | null>(null);
+
   // grid como matriz 3x3: grid[row][col]
   const [grid, setGrid] = useState<number[][]>([]);
   const gridRef = useRef<number[][]>([]);
   useEffect(() => { gridRef.current = grid; }, [grid]);
 
   const [spinning, setSpinning] = useState(false);
-  const [credits, setCredits] = useState(100);
-  const [bet, setBet] = useState(1);
 
   const [middleWin, setMiddleWin] = useState(false);
 
@@ -79,16 +78,9 @@ export default function MainGame() {
     };
   }, []);
 
-  // retorna payout por id (usa mapa estável)
-  const payoutForId = (id?: string) => {
-    if (!id) return 3;
-    return payoutMapRef.current.get(id) ?? 3;
-  };
 
   // checkWin: varre linhas em busca de três simbolos iguais.
-  // Retorna { isWin, line, index, winnerIndex, payout, gain } quando houver vitória.
-  // Exibe `alert` com o ganho (comportamento pedido) e aceita `betParam`.
-  const checkWin = (g: number[][], betParam = 1) => {
+  const checkWin = (g: number[][]) => {
     if (!g || g.length < 3 || g.some((r) => !Array.isArray(r) || r.length < 3))
       return { isWin: false } as const;
 
@@ -96,11 +88,8 @@ export default function MainGame() {
     for (let r = 0; r < 3; r++) {
       if (g[1][0] === g[1][1] && g[1][1] === g[1][2]) {
         const winnerIndex = g[1][0];
-        const id = symbols?.[winnerIndex]?.id;
-        const payout = payoutForId(id);
-        const gain = payout * betParam;
-        alert(`JACKPOT! Você ganhou ${gain} créditos!`);
-        return { isWin: true, line: "row", index: r, winnerIndex, payout, gain } as const;
+        alert(`JACKPOT! Você ganhou!`);
+        return { isWin: true, line: "row", index: r, winnerIndex } as const;
       }
     }
     return { isWin: false } as const;
@@ -109,11 +98,8 @@ export default function MainGame() {
   const spin = async () => {
     if (spinning) return;
     if (!symbols || symbols.length === 0) return alert("Símbolos não carregados ainda.");
-    if (bet > credits) return alert("Créditos insuficientes.");
 
     setSpinning(true);
-    setCredits((c) => c - bet);
-    const currentBet = bet;
 
     // limpa timers anteriores
     intervalsRef.current.forEach(clearInterval);
@@ -166,12 +152,9 @@ export default function MainGame() {
     setSpinning(false);
 
     // após todos as colunas pararem, verificar vitória na linha do meio
-    const result = checkWin(gridRef.current, currentBet);
+    const result = checkWin(gridRef.current);
     if (result.isWin) {
       setMiddleWin(true);
-      const winResult = result as { isWin: true; gain?: number; payout?: number };
-      const gain = winResult.gain ?? (winResult.payout ?? 3) * currentBet;
-      setCredits((c) => c + gain);
       const clearId = window.setTimeout(() => setMiddleWin(false), 1500);
       timeoutsRef.current.push(clearId);
     }
@@ -180,7 +163,7 @@ export default function MainGame() {
   if (!symbols) {
     return (
       <div className="slot-root">
-        <h1>Caça-níqueis</h1>
+        <h1>Caça-níqueis 3x3</h1>
         <div>Carregando símbolos...</div>
       </div>
     );
@@ -205,7 +188,7 @@ export default function MainGame() {
       </div>
 
       <div className="slot-controls">
-        <button onClick={spin} disabled={spinning || bet > credits}>JOGAR</button>
+        <button onClick={spin}>SPIN</button>
       </div>
     </div>
   );
