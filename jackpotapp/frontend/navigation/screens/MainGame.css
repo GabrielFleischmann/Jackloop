@@ -38,15 +38,29 @@
 
 /* Cartão que segura a grade: fundo com borda laranja arredondada */
 .slot-grid{
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  display: flex;
+  gap: 18px;
   padding: 14px;
   border-radius: 14px;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
   border: 2px solid transparent;
   position: relative;
+}
+
+/* frame maior: deixar aparência similar ao design com moldura dourada */
+.slot-root .slot-grid {
+  max-width: 820px;
+  margin: 0 auto 18px auto;
+  padding: 26px;
+  border-radius: 12px;
+  background: linear-gradient(180deg,#1b0b20 0%, #200a2a 100%);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.75), inset 0 0 80px rgba(255,0,140,0.03);
+  border: 6px solid rgba(255,178,77,0.12);
+  display: flex;
+  gap: 18px;
+  height: 420px; /* fixed height so reel animation won't expand container */
+  overflow: hidden;
 }
 
 /* contorno suave laranja */
@@ -65,18 +79,19 @@
 
 /* Célula individual: quadrada, responsiva */
 .cell{
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
-  border-radius: 10px;
+  /* tornar células visualmente transparentes para que a coluna pareça contínua */
+  background: transparent;
+  border-radius: 0;
   aspect-ratio: 1 / 1;
-  min-height: 78px; /* fallback para navegadores sem aspect-ratio */
+  min-height: 78px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 8px;
   font-size: 40px;
   color: #fff;
-  box-shadow: 0 6px 0 rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: none;
+  border: none;
   transition: transform 180ms cubic-bezier(.2,.9,.3,1), box-shadow 180ms;
   user-select: none;
   position: relative;
@@ -102,7 +117,7 @@
 
 /* Imagem do símbolo dentro da célula: mantém proporção */
 .cell img.symbol{
-  width: 70%;       /* ajuste entre 60-80% conforme preferir */
+  width: 78%;       /* ajuste para preencher melhor a coluna */
   height: auto;
   max-height: 80%;
   object-fit: contain;
@@ -110,14 +125,75 @@
   pointer-events: none;
 }
 
+/* divisores verticais entre colunas (linhas removidas entre células) */
+.slot-grid::before,
+.slot-grid::after{
+  /* keep subtle separators as fallback but columns will have their own panel */
+  content: "";
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  background: rgba(255,255,255,0.02);
+  pointer-events: none;
+}
+.slot-grid::before{ left: calc(33.333%); transform: translateX(-1px); }
+.slot-grid::after{ left: calc(66.666%); transform: translateX(-1px); }
+
+/* remover bordas arredondadas internas para células do meio da coluna */
+.slot-column{ flex:1; display:flex; flex-direction:column; gap:0; border-radius:8px; padding:0; align-items:stretch; justify-content:center; background: rgba(0,0,0,0.06); height:100%; position:relative; }
+.slot-column .cell{ width:100%; display:flex; align-items:center; justify-content:center; padding:0; height: calc(100% / 3); box-sizing: border-box; }
+
+/* reel track for scrolling animation */
+.reel-track{ display:flex; flex-direction:column; gap:0; overflow:visible; position:absolute; left:0; right:0; top:0; }
+.reel-track.spinning{ animation-name: reelScroll; animation-iteration-count: infinite; animation-timing-function: linear; }
+
+@keyframes reelScroll{
+  from{ transform: translateY(0); }
+  to{ transform: translateY(-50%); }
+}
+
+.slot-column.spinning{ overflow:hidden; }
+
 /* controles */
-.slot-controls{
-  margin-top: 16px;
+.controls-wrapper{
   display:flex;
-  justify-content:center;
-  gap:10px;
   align-items:center;
-  flex-wrap: wrap;
+  justify-content:space-between;
+  gap:18px;
+  margin-top: 12px;
+  max-width: 820px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 8px 10px;
+}
+
+.controls-left, .controls-right{ width: 140px; display:flex; align-items:center; justify-content:center; }
+.controls-center{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; }
+
+.coin-box{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  border-radius: 8px;
+  padding: 8px 12px;
+  border: 2px solid rgba(255,178,77,0.12);
+  display:flex; align-items:center; gap:8px; min-width:96px; justify-content:center;
+}
+.coin-ico{ font-size:20px; }
+.coin-value{ font-weight:800; color:#ffd79a; background: rgba(0,0,0,0.08); padding:4px 8px; border-radius:6px; }
+
+.bet-label{ font-size:12px; font-weight:700; color:#ffd79a; background: rgba(0,0,0,0.15); padding:6px 14px; border-radius:12px; }
+
+.main-pill{ display:flex; align-items:center; gap:10px; margin-top:4px; }
+.pill-btn{ background: linear-gradient(180deg,#efefef,#d6d6d6); color:#2b0f2b; border-radius:10px; padding:10px 14px; border:none; font-weight:800; box-shadow:0 4px 0 rgba(0,0,0,0.2); cursor:pointer; }
+.pill-play{ background: linear-gradient(180deg,#ffd79a,#ffb24d); color:#1b0713; padding:12px 30px; font-weight:900; border-radius:12px; border:none; box-shadow: 0 6px 0 rgba(0,0,0,0.45); cursor:pointer; font-size:16px; }
+.pill-play:disabled{ opacity:0.6; cursor:not-allowed; }
+
+/* small screens adjust */
+@media (max-width:640px){
+  .slot-root .slot-grid{ max-width: 100%; padding: 12px; }
+  .controls-left, .controls-right{ width:86px; }
+  .pill-play{ padding:10px 18px; font-size:14px; }
+  .coin-value{ padding:4px 6px; }
 }
 
 .slot-controls button{

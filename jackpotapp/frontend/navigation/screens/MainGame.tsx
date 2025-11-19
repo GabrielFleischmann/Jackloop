@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./MainGame.css";
 
 type SymbolDef = { id: string; src: string; payout: number };
@@ -19,8 +19,12 @@ export default function MainGame() {
   useEffect(() => { gridRef.current = grid; }, [grid]);
 
   const [spinning, setSpinning] = useState(false);
+  const [spinningCols, setSpinningCols] = useState<number[]>([]);
 
   const [middleWin, setMiddleWin] = useState(false);
+
+  // display-only bet (UI) — does not affect payouts (game mode without credits/multipliers)
+  const [displayBet, setDisplayBet] = useState(10);
 
   const intervalsRef = useRef<number[]>([]);
   const timeoutsRef = useRef<number[]>([]);
@@ -110,6 +114,8 @@ export default function MainGame() {
     const durations = [800, 1200, 1600];
 
     const columnPromises = durations.map((duration, col) => {
+      // mark column as spinning for visual animation
+      setSpinningCols((s) => (s.includes(col) ? s : [...s, col]));
       return new Promise<void>((resolve) => {
         const intervalId = window.setInterval(() => {
           setGrid((prev) => {
@@ -128,9 +134,9 @@ export default function MainGame() {
         }, 80);
         intervalsRef.current.push(intervalId);
 
-        const timeoutId = window.setTimeout(() => {
+            const timeoutId = window.setTimeout(() => {
           clearInterval(intervalId);
-          setGrid((prev) => {
+              setGrid((prev) => {
             const next: number[][] = Array.from({ length: 3 }, (_, r) =>
               Array.isArray(prev?.[r])
                 ? (prev![r] as number[]).slice()
@@ -142,7 +148,9 @@ export default function MainGame() {
             gridRef.current = next;
             return next;
           });
-          resolve();
+              // remove spinning flag for this column
+              setSpinningCols((s) => s.filter((c) => c !== col));
+              resolve();
         }, duration);
         timeoutsRef.current.push(timeoutId);
       });
@@ -172,23 +180,87 @@ export default function MainGame() {
   return (
     <div className="slot-root">
       <div className={"slot-grid" + (middleWin ? " win" : "")}>
-        {grid.flat().map((symIndex, i) => {
-          const sym = symbols?.[symIndex];
-          const isMiddleCell = Math.floor(i / 3) === 1; // row 1
-          const winnerClass = middleWin && isMiddleCell ? " winner" : "";
+        {/* render columns so each column can have a continuous background panel */}
+        {Array.from({ length: 3 }, (_, col) => {
+          const isColSpinning = spinningCols.includes(col);
           return (
-            <div
-              key={i}
-              className={"cell" + (spinning ? " spinning" : "") + winnerClass}
-            >
-              <img src={sym?.src} alt={sym?.id ?? "symbol"} className="symbol" />
+            <div key={col} className={`slot-column ${isColSpinning ? 'spinning' : ''}`}>
+              <div
+                className={`reel-track ${isColSpinning ? 'spinning' : ''}`}
+                style={isColSpinning ? { animationDuration: `${[800,1200,1600][col]}ms` } : undefined}
+              >
+                {Array.from({ length: 3 }, (_, row) => {
+                  const symIndex = grid?.[row]?.[col];
+                  const sym = symbols?.[symIndex];
+                  const isMiddleCell = row === 1; // middle row
+                  const winnerClass = middleWin && isMiddleCell ? ' winner' : '';
+                  return (
+                    <div key={`${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}${winnerClass}`}>
+                      <img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
+                    </div>
+                  );
+                })}
+                {isColSpinning && (
+                  // duplicate for seamless loop while spinning
+                  Array.from({ length: 3 }, (_, row) => {
+                    const symIndex = grid?.[row]?.[col];
+                    const sym = symbols?.[symIndex];
+                    return (
+                      <div key={`dup-${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}`}>
+                        <img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           );
         })}
       </div>
 
-      <div className="slot-controls">
-        <button onClick={spin}>SPIN</button>
+      <div className="controls-wrapper">
+        <div className="controls-left">
+          <div className="coin-box" id="coin-box" data-role="coin-box">
+            <span className="coin-ico">🪙</span>
+            <span className="coin-value" id="display-bet" data-role="display-bet">{displayBet}</span>
+          </div>
+        </div>
+
+        <div className="controls-center">
+          <div className="bet-label">{displayBet} MOEDAS</div>
+          <div className="main-pill">
+            <button
+              id="btn-decrease-bet"
+              data-role="decrease-bet"
+              aria-label="Diminuir aposta"
+              className="pill-btn"
+              onClick={() => setDisplayBet((v) => Math.max(1, v - 1))}
+            >
+              -
+            </button>
+            <button
+              id="btn-spin"
+              data-role="spin"
+              aria-label="Girar roleta"
+              className="pill-play"
+              onClick={spin}
+              disabled={spinning}
+            >
+              {spinning ? '...' : 'GIRAR ROLETA'}
+            </button>
+            <button
+              id="btn-increase-bet"
+              data-role="increase-bet"
+              aria-label="Aumentar aposta"
+              className="pill-btn"
+              onClick={() => setDisplayBet((v) => v + 1)}
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div className="controls-right" />
       </div>
     </div>
   );
