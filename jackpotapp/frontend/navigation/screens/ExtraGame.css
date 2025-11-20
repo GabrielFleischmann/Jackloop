@@ -1,0 +1,93 @@
+:root {
+    --primary-color:#372258;
+    --secondary-color:#202020;
+    --sub-color:#4e2c85;
+    --accent-color:#929292;
+    --text-color:#FFFFFF;
+    --other: #FFAB4C;
+}
+
+.caixaJogo{
+  width: 55%;
+  height: 65%;
+  margin: 50px auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #000000,var(--primary-color), #1A0030);
+  border: 2px solid var(--sub-color);
+  border-radius: 10px;
+}
+
+.caixaJogo h1{
+  color: var(--other);
+  font-family: "Inter", sans-serif;
+  gap: 20px;
+  font-size: 40px;
+  text-shadow: 0 6px 0 #4d3316;
+  margin: 15px;
+  margin-top: 75px;
+}
+.caixaJogo h2{
+  color: var(--accent-color);
+  font-family: "Inter", sans-serif;
+  gap: 10px;
+  font-size: 16px;
+  margin: 10px;
+}
+
+.caixaInput {
+    width: 30%;
+    height: 30%;
+    margin: 10px auto;   
+    display: flex;     
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column;
+}
+
+.caixaJogo button{
+    padding: 15px 90px;
+    color:var(--other);
+    background-color: var(--primary-color);
+    border: 2px solid var(--other);
+    border-radius: 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: bold;
+    margin: 10px;
+    font-size: 30px;
+    box-shadow: 0 0 8px #8a2be2;
+}
+
+.caixaJogo button:hover {
+  color:#ebb577;
+  background-color: #7853b3;
+  border: 2px solid #ebb577;
+  
+}
+
+.mensagem {
+    color: var(--accent-color);
+    font-family: "Inter", sans-serif;
+    gap: 10px;
+    font-size: 10px;
+    margin: 10px;
+}
+
+.caixaInput input {
+  width: 80%;
+  height: 20%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 0 8px #8a2be2;
+  transition: 0.3s;
+}
+
+.caixaInput input:focus {
+  box-shadow: 0 0 12px #b266ff;
+}
