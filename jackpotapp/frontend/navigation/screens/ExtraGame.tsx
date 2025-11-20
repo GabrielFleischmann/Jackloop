@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 export default function ExtraGame() {
   const [valor, setValor] = useState(250);
   const [secreto, setSecreto] = useState(1);
-  const [mensagem, setMensagem] = useState("");   
+  const [mensagem, setMensagem] = useState(""); 
+  const [mostrarInfo, setMostrarInfo] = useState(false);    
 
   useEffect(() => {
     const numero = Math.floor(Math.random() * 500) + 1;
@@ -43,8 +44,26 @@ export default function ExtraGame() {
             onChange={(e) => setValor(Number(e.target.value))}
           />
         </div>
-        <div><button onClick={apostar}>Apostar</button></div>
+        <div><button className="botaoApostar" onClick={apostar}>Apostar</button></div>
         <div className="mensagem"><p>{mensagem}</p></div>
+        
+        <div>
+          <button className="botaoInfo" onClick={() => setMostrarInfo(true)}>!</button>
+          {mostrarInfo && (
+              <div className="fundoEscurecido">
+                <div className="janelaAviso">
+                  <h1 style={{ marginTop: "0px", fontSize: "22px" }}>Como funciona?</h1>
+                  <p>
+                    Escolha um número entre 1 e 500 movendo a barrinha.<br /><br />
+                    Clique em "Apostar" para tentar adivinhar.<br /><br />
+                    Se você acertar o número secreto, ganhará moedas!
+                    Se errar, não se preocupe, poderá tentar novamente com um novo número secreto.
+                  </p>
+                  <button onClick={() => setMostrarInfo(false)}>Fechar</button>
+                </div>
+              </div>
+            )}
+        </div>
       </div>
     </>
   );

@@ -8,6 +8,7 @@
 }
 
 .caixaJogo{
+  position: relative;
   width: 55%;
   height: 65%;
   margin: 50px auto;
@@ -46,7 +47,7 @@
     flex-direction: column;
 }
 
-.caixaJogo button{
+.botaoApostar{
     padding: 15px 90px;
     color:var(--other);
     background-color: var(--primary-color);
@@ -57,6 +58,7 @@
     margin: 10px;
     font-size: 30px;
     box-shadow: 0 0 8px #8a2be2;
+    cursor: pointer;
 }
 
 .caixaJogo button:hover {
@@ -85,9 +87,61 @@
   font-size: 16px;
   outline: none;
   box-shadow: 0 0 8px #8a2be2;
-  transition: 0.3s;
 }
 
 .caixaInput input:focus {
   box-shadow: 0 0 12px #b266ff;
+}
+
+.botaoInfo {
+  position: absolute;
+  padding: 15px 10px;
+  bottom: 10px;    
+  right: 10px;  
+  color:var(--other);
+  background-color: var(--primary-color);
+  border: 2px solid var(--other);
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: bold;
+  margin: 10px;
+  cursor: pointer; 
+  font-size: 10px; 
+}
+
+
+.fundoEscurecido {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.janelaAviso {
+  background: #000000;
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 0 15px #8a2be2;
+
+}
+
+.janelaAviso button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  color:var(--other);
+  background-color: var(--primary-color);
+  border: 2px solid var(--other);
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: bold;
 }
