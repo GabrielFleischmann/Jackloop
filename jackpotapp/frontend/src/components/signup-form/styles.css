@@ -1,0 +1,22 @@
+.main-container {
+    color: #99A1AF;
+}
+
+h1 {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+p {
+    font-size: 0.7rem;
+    color: #6A7282;
+}
+
+i:hover {
+    color: #361A64;
+}
+
+span {
+    color: red;
+    font-size: 0.7rem;
+}
