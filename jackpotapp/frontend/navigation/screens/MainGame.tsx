@@ -1,267 +1,246 @@
 import { useEffect, useRef, useState } from "react";
 import "./MainGame.css";
 
-type SymbolDef = { id: string; src: string; payout: number };
+import starPng from "../../src/assets/Symbols/star.png";
+import diamondPng from "../../src/assets/Symbols/diamond.png";
+import coinsPng from "../../src/assets/Symbols/coins.png";
+import chestPng from "../../src/assets/Symbols/chest.png";
+import bellPng from "../../src/assets/Symbols/bell.png";
 
-// import.meta.glob (assíncrono) — compatível com Vite
-const modules = import.meta.glob("../../src/assets/Symbols/*.{png,jpg,jpeg,svg}");
+type SymbolIcon = { id: string; src: string; label?: string };
 
-function randIndexForLength(len: number) {
-  return Math.floor(Math.random() * len);
+const AVAILABLE_SYMBOLS: SymbolIcon[] = [
+	{ id: "star", src: starPng, label: "Star" },
+	{ id: "diamond", src: diamondPng, label: "Diamond" },
+	{ id: "coins", src: coinsPng, label: "Coins" },
+	{ id: "chest", src: chestPng, label: "Chest" },
+	{ id: "bell", src: bellPng, label: "Bell" },
+];
+
+function randomSymbol(): SymbolIcon {
+	return AVAILABLE_SYMBOLS[Math.floor(Math.random() * AVAILABLE_SYMBOLS.length)];
+}
+
+function createRandomBoard(rows = 3, cols = 3): SymbolIcon[][] {
+	const board: SymbolIcon[][] = [];
+	for (let r = 0; r < rows; r++) {
+		const row: SymbolIcon[] = [];
+		for (let c = 0; c < cols; c++) row.push(randomSymbol());
+		board.push(row);
+	}
+	return board;
+}
+
+type Board = SymbolIcon[][];
+
+function evaluateBoard(board: Board) {
+	// Vitória só se a linha do meio (middle row) tiver todos os símbolos iguais
+	const rows = board.length;
+	const cols = board[0]?.length ?? 0;
+	const winners: boolean[][] = Array.from({ length: rows }, () => Array(cols).fill(false));
+
+	if (rows === 0 || cols === 0) return { winners, isWin: false, symbol: null };
+
+	const middleRow = Math.floor(rows / 2); // para 3x3 -> 1
+	const first = board[middleRow][0];
+	const isWin = Boolean(first && board[middleRow].every((s) => s.id === first.id));
+	if (isWin) {
+		for (let c = 0; c < cols; c++) winners[middleRow][c] = true;
+		return { winners, isWin: true, symbol: first };
+	}
+
+	return { winners, isWin: false, symbol: null };
 }
 
 export default function MainGame() {
-  const [symbols, setSymbols] = useState<SymbolDef[] | null>(null);
+	const ROWS = 3;
+	const COLS = 3;
 
-  // grid como matriz 3x3: grid[row][col]
-  const [grid, setGrid] = useState<number[][]>([]);
-  const gridRef = useRef<number[][]>([]);
-  useEffect(() => { gridRef.current = grid; }, [grid]);
+	const [board, setBoard] = useState<Board>(() => createRandomBoard(ROWS, COLS));
+	const [displayedBoard, setDisplayedBoard] = useState<Board>(() => createRandomBoard(ROWS, COLS));
+	const [spinning, setSpinning] = useState(false);
+	const [winners, setWinners] = useState<boolean[][]>(() =>
+		Array.from({ length: ROWS }, () => Array(COLS).fill(false))
+	);
+	const [isWin, setIsWin] = useState(false);
+	const [winSymbol, setWinSymbol] = useState<SymbolIcon | null>(null);
+	const [hasSpun, setHasSpun] = useState(false);
+	const [displayBet, setDisplayBet] = useState(10);
+	const [winnings, setWinnings] = useState(0);
 
-  const [spinning, setSpinning] = useState(false);
-  const [spinningCols, setSpinningCols] = useState<number[]>([]);
+	const intervalsRef = useRef<number[]>([]);
+	const finishedRef = useRef(0);
 
-  const [middleWin, setMiddleWin] = useState(false);
+	function handleSpin() {
+		if (spinning) return;
+		// prepara o giro: duração aleatória por coluna
+		const durations = Array.from({ length: COLS }, (_, c) => 900 + c * 220 + Math.floor(Math.random() * 400));
+		const next = createRandomBoard(ROWS, COLS);
 
-  // display-only bet (UI) — does not affect payouts (game mode without credits/multipliers)
-  const [displayBet, setDisplayBet] = useState(10);
+		// cria buffers começando pelos símbolos atuais da coluna e adiciona símbolos extras para o giro
+		const buffers = Array.from({ length: COLS }, (_, c) => {
+			const columnStart: SymbolIcon[] = Array.from({ length: ROWS }, (_, r) => board[r][c]);
+			const extraCount = 8 + Math.floor(Math.random() * 8);
+			const extras: SymbolIcon[] = Array.from({ length: extraCount }, () => randomSymbol());
+			return [...columnStart, ...extras];
+		});
 
-  const intervalsRef = useRef<number[]>([]);
-  const timeoutsRef = useRef<number[]>([]);
+		// reseta contadores e limpa intervalos antigos
+		finishedRef.current = 0;
+		intervalsRef.current.forEach((id) => clearInterval(id));
+		intervalsRef.current = [];
 
-  // mapa de payout por id para evitar depender de índices
-  const payoutMapRef = useRef<Map<string, number>>(new Map());
+		setSpinning(true);
+		setHasSpun(true);
 
-  // carregar símbolos dinamicamente (apenas uma vez)
-  useEffect(() => {
-    let mounted = true;
-    async function loadAll() {
-      const paths = Object.keys(modules);
-      const promises = paths.map((p) =>
-        (modules[p] as () => Promise<any>)().then((m) => ({ path: p, src: m.default }))
-      );
-      const results = await Promise.all(promises);
+		// inicia o giro por coluna atualizando o displayedBoard rapidamente
+		const newDisplayed = displayedBoard.map((r) => r.slice());
+		buffers.forEach((buffer, c) => {
+			let offset = 0;
+			const tickMs = 60 + Math.floor(Math.random() * 60);
+			const intervalId = window.setInterval(() => {
+				// atualiza a coluna usando o buffer a partir do offset
+				const colView = Array.from({ length: ROWS }, (_, r) => buffer[(offset + r) % buffer.length]);
+				for (let r = 0; r < ROWS; r++) newDisplayed[r][c] = colView[r];
+				setDisplayedBoard(prev => {
+					const copy = prev.map(row => row.slice());
+					for (let r = 0; r < ROWS; r++) copy[r][c] = colView[r];
+					return copy;
+				});
+				offset = (offset + 1) % buffer.length;
+			}, tickMs);
+			intervalsRef.current[c] = intervalId as unknown as number;
 
-      if (!mounted) return;
+			// para o giro da coluna após o tempo e aplica o resultado final
+			setTimeout(() => {
+				clearInterval(intervalsRef.current[c]);
+				// aplica a coluna final baseada no board 'next' (resultado final)
+				const finalCol = Array.from({ length: ROWS }, (_, r) => next[r][c]);
+				setDisplayedBoard(prev => {
+					const copy = prev.map(row => row.slice());
+					for (let r = 0; r < ROWS; r++) copy[r][c] = finalCol[r];
+					return copy;
+				});
+				// quando todas as colunas terminarem, aplica o board final e encerra o giro
+				finishedRef.current += 1;
+				if (finishedRef.current === COLS) {
+					setBoard(next);
+					setSpinning(false);
+				}
+			}, durations[c]);
+		});
+	}
 
-      const loaded: SymbolDef[] = results.map(({ path, src }) => {
-        const fileName = path.split("/").pop() || path;
-        const id = fileName.replace(/\.(png|jpg|jpeg|svg)$/i, "");
-        // ajusta payout conforme nome (ou personalize manualmente)
-        let payout = 3;
-        if (/star/i.test(id)) payout = 100;
-        else if (/diamond/i.test(id)) payout = 50;
-        else if (/chest/i.test(id)) payout = 25;
-        else if (/coins/i.test(id)) payout = 10;
-        else if (/bell/i.test(id)) payout = 5;
-        return { id, src, payout };
-      });
+	useEffect(() => {
+		const result = evaluateBoard(board);
+		setWinners(result.winners);
+		setIsWin(result.isWin);
+		setWinSymbol(result.symbol ?? null);
+	}, [board]);
 
-      // popular payoutMap por id (estável)
-      const map = new Map<string, number>();
-      loaded.forEach((s) => map.set(s.id, s.payout));
-      payoutMapRef.current = map;
+	// mantém displayedBoard sincronizado quando não está girando
+	useEffect(() => {
+		if (!spinning) setDisplayedBoard(board.map((r) => r.slice()));
+	}, [board, spinning]);
 
-      setSymbols(loaded);
-      // inicializa 3x3
-      const initial = Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => randIndexForLength(loaded.length)));
-      setGrid(initial);
-    }
+	// limpa os intervalos ao desmontar o componente
+	useEffect(() => {
+		return () => {
+			intervalsRef.current.forEach((id) => clearInterval(id));
+		};
+	}, []);
 
-    loadAll();
-    return () => { mounted = false; };
-  }, []);
+	return (
+		<div className="slot-root">
+			<div className="slot-frame">
+				<div className={"slot-grid" + (isWin ? " win" : "")}>
+				{/* renderiza as colunas para permitir um painel de fundo contínuo */}
+				{Array.from({ length: 3 }, (_, col) => {
+					const isColSpinning = spinning; 
+					return (
+						<div key={col} className={`slot-column ${isColSpinning ? 'spinning' : ''}`}>
+							<div
+								className={`reel-track ${isColSpinning ? 'spinning' : ''}`}
+								style={isColSpinning ? { animationDuration: `${[800,1200,1600][col]}ms` } : undefined}
+							>
+								{Array.from({ length: 3 }, (_, row) => {
+									const sym = (spinning ? displayedBoard : board)?.[row]?.[col];
+									const isMiddleCell = row === 1;
+									const winnerClass = isWin && isMiddleCell ? ' winner' : '';
+									return (
+										<div key={`${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}${winnerClass}`}>
+											<img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
+										</div>
+									);
+								})}
+								{isColSpinning && (
+									// duplica para criar um giro contínuo sem corte
+									Array.from({ length: 3 }, (_, row) => {
+										const sym = (spinning ? displayedBoard : board)?.[row]?.[col];
+										return (
+											<div key={`dup-${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}`}>
+												<img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
+											</div>
+										);
+									})
+								)}
+							</div>
+						</div>
+					);
+				})}
+				</div>
 
-  // cleanup para timers caso o componente desmonte
-  useEffect(() => {
-    return () => {
-      intervalsRef.current.forEach((id) => clearInterval(id));
-      timeoutsRef.current.forEach((id) => clearTimeout(id));
-      intervalsRef.current = [];
-      timeoutsRef.current = [];
-    };
-  }, []);
-
-
-  // checkWin: varre linhas em busca de três simbolos iguais.
-  const checkWin = (g: number[][]) => {
-    if (!g || g.length < 3 || g.some((r) => !Array.isArray(r) || r.length < 3))
-      return { isWin: false } as const;
-
-    // Checa linhas
-    for (let r = 0; r < 3; r++) {
-      if (g[1][0] === g[1][1] && g[1][1] === g[1][2]) {
-        const winnerIndex = g[1][0];
-        alert(`JACKPOT! Você ganhou!`);
-        return { isWin: true, line: "row", index: r, winnerIndex } as const;
-      }
-    }
-    return { isWin: false } as const;
-  };
-
-  const spin = async () => {
-    if (spinning) return;
-    if (!symbols || symbols.length === 0) return alert("Símbolos não carregados ainda.");
-
-    setSpinning(true);
-
-    // limpa timers anteriores
-    intervalsRef.current.forEach(clearInterval);
-    timeoutsRef.current.forEach(clearTimeout);
-    intervalsRef.current = [];
-    timeoutsRef.current = [];
-
-    const durations = [800, 1200, 1600];
-
-    const columnPromises = durations.map((duration, col) => {
-      // mark column as spinning for visual animation
-      setSpinningCols((s) => (s.includes(col) ? s : [...s, col]));
-      return new Promise<void>((resolve) => {
-        const intervalId = window.setInterval(() => {
-          setGrid((prev) => {
-            // garantir que 'prev' seja uma matriz 3x3 válida antes de copiar
-            const next: number[][] = Array.from({ length: 3 }, (_, r) =>
-              Array.isArray(prev?.[r])
-                ? (prev![r] as number[]).slice()
-                : Array.from({ length: 3 }, () => randIndexForLength(symbols.length))
-            );
-            for (let row = 0; row < 3; row++) {
-              next[row][col] = randIndexForLength(symbols.length);
-            }
-            gridRef.current = next;
-            return next;
-          });
-        }, 80);
-        intervalsRef.current.push(intervalId);
-
-            const timeoutId = window.setTimeout(() => {
-          clearInterval(intervalId);
-              setGrid((prev) => {
-            const next: number[][] = Array.from({ length: 3 }, (_, r) =>
-              Array.isArray(prev?.[r])
-                ? (prev![r] as number[]).slice()
-                : Array.from({ length: 3 }, () => randIndexForLength(symbols.length))
-            );
-            for (let row = 0; row < 3; row++) {
-              next[row][col] = randIndexForLength(symbols.length);
-            }
-            gridRef.current = next;
-            return next;
-          });
-              // remove spinning flag for this column
-              setSpinningCols((s) => s.filter((c) => c !== col));
-              resolve();
-        }, duration);
-        timeoutsRef.current.push(timeoutId);
-      });
-    });
-
-    await Promise.all(columnPromises);
-    setSpinning(false);
-
-    // após todos as colunas pararem, verificar vitória na linha do meio
-    const result = checkWin(gridRef.current);
-    if (result.isWin) {
-      setMiddleWin(true);
-      const clearId = window.setTimeout(() => setMiddleWin(false), 1500);
-      timeoutsRef.current.push(clearId);
-    }
-  };
-
-  if (!symbols) {
-    return (
-      <div className="slot-root">
-        <h1>Caça-níqueis 3x3</h1>
-        <div>Carregando símbolos...</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="slot-root">
-      <div className={"slot-grid" + (middleWin ? " win" : "")}>
-        {/* render columns so each column can have a continuous background panel */}
-        {Array.from({ length: 3 }, (_, col) => {
-          const isColSpinning = spinningCols.includes(col);
-          return (
-            <div key={col} className={`slot-column ${isColSpinning ? 'spinning' : ''}`}>
-              <div
-                className={`reel-track ${isColSpinning ? 'spinning' : ''}`}
-                style={isColSpinning ? { animationDuration: `${[800,1200,1600][col]}ms` } : undefined}
-              >
-                {Array.from({ length: 3 }, (_, row) => {
-                  const symIndex = grid?.[row]?.[col];
-                  const sym = symbols?.[symIndex];
-                  const isMiddleCell = row === 1; // middle row
-                  const winnerClass = middleWin && isMiddleCell ? ' winner' : '';
-                  return (
-                    <div key={`${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}${winnerClass}`}>
-                      <img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
-                    </div>
-                  );
-                })}
-                {isColSpinning && (
-                  // duplicate for seamless loop while spinning
-                  Array.from({ length: 3 }, (_, row) => {
-                    const symIndex = grid?.[row]?.[col];
-                    const sym = symbols?.[symIndex];
-                    return (
-                      <div key={`dup-${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}`}>
-                        <img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="controls-wrapper">
-        <div className="controls-left">
-          <div className="coin-box" id="coin-box" data-role="coin-box">
-            <span className="coin-ico">🪙</span>
-            <span className="coin-value" id="display-bet" data-role="display-bet">{displayBet}</span>
-          </div>
-        </div>
-
-        <div className="controls-center">
-          <div className="bet-label">{displayBet} MOEDAS</div>
-          <div className="main-pill">
-            <button
-              id="btn-decrease-bet"
-              data-role="decrease-bet"
-              aria-label="Diminuir aposta"
-              className="pill-btn"
-              onClick={() => setDisplayBet((v) => Math.max(1, v - 1))}
-            >
-              -
-            </button>
-            <button
-              id="btn-spin"
-              data-role="spin"
-              aria-label="Girar roleta"
-              className="pill-play"
-              onClick={spin}
-              disabled={spinning}
-            >
-              {spinning ? '...' : 'GIRAR ROLETA'}
-            </button>
-            <button
-              id="btn-increase-bet"
-              data-role="increase-bet"
-              aria-label="Aumentar aposta"
-              className="pill-btn"
-              onClick={() => setDisplayBet((v) => v + 1)}
-            >
-              +
-            </button>
-          </div>
-        </div>
-
-        <div className="controls-right" />
-      </div>
-    </div>
-  );
+				<div className="controls-wrapper">
+					<div className="controls-center">
+						<div className="bet-label">{displayBet} MOEDAS</div>
+						<div className="main-pill">
+							<div className="coin-box" id="coin-box" data-role="coin-box">
+								<div className="coin-line">
+									<span className="coin-ico">🪙</span>
+								</div>
+								<span className="coin-value" id="display-bet" data-role="display-bet">{displayBet}</span>
+							</div>
+							<button
+								id="btn-decrease-bet"
+								data-role="decrease-bet"
+								aria-label="Diminuir aposta"
+								className="pill-btn"
+								onClick={() => setDisplayBet((v) => Math.max(1, v - 1))}
+								>
+								-
+								</button>
+							<button
+								id="btn-spin"
+								data-role="spin"
+								aria-label="Girar roleta"
+								className="pill-play"
+								onClick={handleSpin}
+								disabled={spinning}
+								>
+								{spinning ? '...' : 'GIRAR ROLETA'}
+							</button>
+							<button
+								id="btn-increase-bet"
+								data-role="increase-bet"
+								aria-label="Aumentar aposta"
+								className="pill-btn"
+								onClick={() => setDisplayBet((v) => v + 1)}
+								>
+								+
+								</button>
+							<div className="gain-box" id="gain-box" data-role="gain-box">
+								<span className="coin-ico">🪙</span>
+								<span className="gain-label">GANHOS</span>
+								<span className="gain-value" id="display-winnings" data-role="display-winnings">{winnings}</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 }
+
+
+
+

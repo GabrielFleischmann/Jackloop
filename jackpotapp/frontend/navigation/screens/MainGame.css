@@ -10,18 +10,18 @@
 
 /* Container geral */
 .slot-root{
-  max-width: 520px;
-  margin: 28px auto;
-  padding: 20px;
+  max-width: 1280px;
+  margin: 18px auto 32px auto;
+  padding: 24px 28px 36px 28px;
   color: var(--muted);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
 /* Header */
 .slot-root h1{
-  margin: 0 0 12px 0;
+  margin: 0 0 14px 0;
   color: #ffe9b8;
-  font-size: 20px;
+  font-size: 24px;
   text-shadow: 0 2px 0 rgba(0,0,0,0.6);
 }
 
@@ -36,99 +36,56 @@
   font-weight: 600;
 }
 
-/* Cartão que segura a grade: fundo com borda laranja arredondada */
+/* Cartão que segura o quadro de dentro: fundo com borda laranja arredondada */
 .slot-grid{
   display: flex;
-  gap: 18px;
-  padding: 14px;
-  border-radius: 14px;
+  gap: 20px;
+  padding: 18px;
+  border-radius: 16px;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  box-shadow: 0 6px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
   border: 2px solid transparent;
   position: relative;
 }
 
-/* frame maior: deixar aparência similar ao design com moldura dourada */
+/* quadro de dentro*/
 .slot-root .slot-grid {
-  max-width: 820px;
-  margin: 0 auto 18px auto;
-  padding: 26px;
-  border-radius: 12px;
-  background: linear-gradient(180deg,#1b0b20 0%, #200a2a 100%);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.75), inset 0 0 80px rgba(255,0,140,0.03);
-  border: 6px solid rgba(255,178,77,0.12);
+  width: 800px;
+  margin: 0 auto 20px auto;
+  padding: 36px;
+  border-radius: 0px;
+  background: linear-gradient(180deg,#1b0b20 0%, #843da5 100%);
+  box-shadow: 0 22px 48px rgba(0,0,0,0.80), inset 0 0 100px rgba(255,0,140,0.03);
+  border: 8px solid rgb(247, 166, 60);
   display: flex;
-  gap: 18px;
-  height: 420px; /* fixed height so reel animation won't expand container */
+  gap: 20px;
+  height: 560px;
   overflow: hidden;
 }
 
-/* contorno suave laranja */
-.slot-grid::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
-  padding: 2px;
-  background: linear-gradient(90deg, rgba(255,178,77,0.18), rgba(255,178,77,0.05));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-/* Célula individual: quadrada, responsiva */
-.cell{
-  /* tornar células visualmente transparentes para que a coluna pareça contínua */
-  background: transparent;
-  border-radius: 0;
-  aspect-ratio: 1 / 1;
-  min-height: 78px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  font-size: 40px;
-  color: #fff;
-  box-shadow: none;
-  border: none;
-  transition: transform 180ms cubic-bezier(.2,.9,.3,1), box-shadow 180ms;
-  user-select: none;
-  position: relative;
-  overflow: hidden;
-}
-
-/* leve efeito glass e brilho interno */
-.cell::after{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-/* quando girando, sobe levemente e tem brilho */
-.cell.spinning{
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 14px 28px rgba(11,8,18,0.6);
-  filter: drop-shadow(0 6px 10px rgba(11,8,18,0.45));
+/*quadro de fora*/
+.slot-frame{
+  width: 1600px;
+  margin: -5px -400px;
+  padding: 28px;
+  border-radius: 22px;
+  background: linear-gradient(180deg,#25071a, #2a0a2e);
+  border: 3px solid #f2b24d; /* thicker gold border */
+  box-shadow: 0 14px 40px rgba(0,0,0,0.8);
 }
 
 /* Imagem do símbolo dentro da célula: mantém proporção */
 .cell img.symbol{
-  width: 78%;       /* ajuste para preencher melhor a coluna */
-  height: auto;
-  max-height: 80%;
+  width: 86%;       /* ajuste para preencher melhor a coluna */
+  height: 200px;
+  max-height: 90%;
   object-fit: contain;
-  display: block;
+  display: center;
   pointer-events: none;
 }
 
-/* divisores verticais entre colunas (linhas removidas entre células) */
-.slot-grid::before,
+/* divisores verticais entre colunas*/
 .slot-grid::after{
-  /* keep subtle separators as fallback but columns will have their own panel */
   content: "";
   position: absolute;
   top: 18px;
@@ -137,116 +94,196 @@
   background: rgba(255,255,255,0.02);
   pointer-events: none;
 }
-.slot-grid::before{ left: calc(33.333%); transform: translateX(-1px); }
-.slot-grid::after{ left: calc(66.666%); transform: translateX(-1px); }
 
-/* remover bordas arredondadas internas para células do meio da coluna */
-.slot-column{ flex:1; display:flex; flex-direction:column; gap:0; border-radius:8px; padding:0; align-items:stretch; justify-content:center; background: rgba(0,0,0,0.06); height:100%; position:relative; }
-.slot-column .cell{ width:100%; display:flex; align-items:center; justify-content:center; padding:0; height: calc(100% / 3); box-sizing: border-box; }
+.slot-grid::after{ 
+  left: calc(66.666%); 
+  transform: translateX(-1px); 
+}
 
-/* reel track for scrolling animation */
-.reel-track{ display:flex; flex-direction:column; gap:0; overflow:visible; position:absolute; left:0; right:0; top:0; }
-.reel-track.spinning{ animation-name: reelScroll; animation-iteration-count: infinite; animation-timing-function: linear; }
+/* colunas caça niqueis*/
+.slot-column{ 
+  flex:1; 
+  display:flex; 
+  flex-direction:column; 
+  gap:0; 
+  border-radius:8px; 
+  padding:0; 
+  align-items:stretch; 
+  justify-content:center; 
+  background: rgba(0,0,0,0.06); 
+  height:200%; 
+  position:relative; 
+}
+
+.slot-column .cell{ 
+  width:100%; 
+  display: flex; 
+  align-items:center; 
+  justify-content:center; 
+  padding:0; 
+  height: calc(100% / 3); 
+  box-sizing: border-box; 
+}
+
+/* animação caça niqueis */
+.reel-track{ 
+  display:flex; 
+  flex-direction:column; 
+  gap:0; overflow:visible; 
+  position:absolute; 
+  left:0; 
+  right:0;
+  top:0; 
+}
+
+.reel-track.spinning{ 
+  animation-name: reelScroll; 
+  animation-iteration-count: 1; 
+  animation-timing-function: cubic-bezier(.22,.9,.31,1); 
+  animation-fill-mode: forwards; 
+}
 
 @keyframes reelScroll{
   from{ transform: translateY(0); }
   to{ transform: translateY(-50%); }
 }
 
-.slot-column.spinning{ overflow:hidden; }
+.slot-column.spinning{ 
+  overflow:hidden; 
+}
 
 /* controles */
 .controls-wrapper{
   display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  margin-top: 12px;
-  max-width: 820px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 8px 10px;
+  align-items:center center;
+  margin-top: 15px;
+  max-width: 1000px;
+  margin-left: 270px;
+  padding: 12px 14px;
 }
 
-.controls-left, .controls-right{ width: 140px; display:flex; align-items:center; justify-content:center; }
-.controls-center{ flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.controls-center{ 
+  flex:1; 
+  display:flex; 
+  flex-direction:column; 
+  align-items:center; 
+}
 
+/*quadrado da moeda*/
 .coin-box{
+   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  outline: 1px solid rgba(245, 140, 2, 0.877);
+  border-radius: 10px;
+  min-width:120px; 
+  padding: 10px 14px;
+  gap:10px; 
+  display:flex; 
+  align-items:center;  
+  justify-content:center;
+}
+
+.coin-ico{
+  font-size:20px; 
+  margin-left: -10px;
+  margin-right: 10px;
+
+}
+
+.coin-line{
+  border-right: solid rgba(247, 151, 26, 0.651); 
+  height: auto;
+  overflow: visible;
+}
+
+
+.coin-value{ 
+  font-size:20px; 
+  font-weight: 700;
+  color:#ffffff;  
+  padding:4px 10px; 
+  border-radius:8px; 
+}
+
+/* quadrado de ganhos */
+.gain-box{
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
-  border-radius: 8px;
-  padding: 8px 12px;
-  border: 2px solid rgba(255,178,77,0.12);
-  display:flex; align-items:center; gap:8px; min-width:96px; justify-content:center;
-}
-.coin-ico{ font-size:20px; }
-.coin-value{ font-weight:800; color:#ffd79a; background: rgba(0,0,0,0.08); padding:4px 8px; border-radius:6px; }
-
-.bet-label{ font-size:12px; font-weight:700; color:#ffd79a; background: rgba(0,0,0,0.15); padding:6px 14px; border-radius:12px; }
-
-.main-pill{ display:flex; align-items:center; gap:10px; margin-top:4px; }
-.pill-btn{ background: linear-gradient(180deg,#efefef,#d6d6d6); color:#2b0f2b; border-radius:10px; padding:10px 14px; border:none; font-weight:800; box-shadow:0 4px 0 rgba(0,0,0,0.2); cursor:pointer; }
-.pill-play{ background: linear-gradient(180deg,#ffd79a,#ffb24d); color:#1b0713; padding:12px 30px; font-weight:900; border-radius:12px; border:none; box-shadow: 0 6px 0 rgba(0,0,0,0.45); cursor:pointer; font-size:16px; }
-.pill-play:disabled{ opacity:0.6; cursor:not-allowed; }
-
-/* small screens adjust */
-@media (max-width:640px){
-  .slot-root .slot-grid{ max-width: 100%; padding: 12px; }
-  .controls-left, .controls-right{ width:86px; }
-  .pill-play{ padding:10px 18px; font-size:14px; }
-  .coin-value{ padding:4px 6px; }
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  outline: 1px solid rgba(245, 140, 2, 0.877);
+  border-radius: 10px;
+  min-width:120px; 
+  padding: 10px 14px;
+  gap:10px; 
+  display:flex; 
+  align-items:center;  
+  justify-content:center;
 }
 
-.slot-controls button{
-  padding:8px 12px;
-  font-weight:700;
-  border-radius:10px;
-  border:none;
-  cursor:pointer;
-  color:#2b0f2b;
-  background: linear-gradient(180deg,#ffd79a,#ffb24d);
-  box-shadow: 0 4px 0 rgba(0,0,0,0.35);
-  transition: transform 120ms;
-  box-sizing: border-box;
-  min-width: 44px;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.gain-label{ 
+  color:#ffffff; 
+  font-weight:700; 
+  font-size:20px; 
 }
 
-.slot-controls button:active{ transform: translateY(2px); }
-.slot-controls button:disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-  transform:none;
+.gain-value{ 
+  font-size:20px; 
+  font-weight: 700;
+  color:#ffffff;  
+  padding:4px 10px; 
+  border-radius:8px;  
 }
 
-/* botões + / - estilo neutro (se usados) */
-.slot-controls button:nth-child(1),
-.slot-controls button:nth-child(2){
-  padding:8px 10px;
-  background: linear-gradient(180deg,#efefef,#d6d6d6);
-  color:#2b0f2b;
-  font-weight:800;
-  box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+/*quadrado sobre os ganhos*/
+.bet-label{ 
+  font-size:17px; 
+  font-weight:700; 
+  color:#ffa723; 
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  background:   rgba(0, 0, 0, 0.15); 
+  padding:10px 24px; 
+  border-radius:5px; 
+  margin-right: 80px
 }
 
-/* botão RANDOM (se existir) */
-.slot-controls button:nth-child(4){
-  background: linear-gradient(180deg,#bdbdbd,#8f8f8f);
-  color:#fff;
+.main-pill{ 
+  display:flex; 
+  align-items:center; 
+  gap:10px; 
+
 }
 
-/* foco visível para acessibilidade */
-.slot-controls button:focus-visible{
-  outline: 3px solid rgba(255,178,77,0.35);
-  outline-offset: 3px;
+.pill-btn{ 
+  background: linear-gradient(180deg, rgba(255,255,255,0.02),rgba(0,0,0,0.12)); 
+  color:#ffa723; 
+  border-radius:10px; 
+  padding:10px 14px; 
+  border:none; 
+  font-weight:800; 
+  box-shadow:0 4px 0 rgba(0,0,0,0.2); 
+  cursor:pointer; 
 }
 
-/* pequena melhoria visual quando ganha - usado pelo JS via classe (não obrigatório) */
+.pill-play{ 
+  background: linear-gradient(180deg, rgba(255,255,255,0.02),rgba(0,0,0,0.12)); 
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.45); 
+  color:#ffa723; 
+  padding:16px 36px; 
+  font-weight:900; 
+  border-radius:14px; 
+  cursor:pointer; 
+  font-size:18px; 
+}
+
+.pill-play:disabled{ 
+  opacity:0.6; 
+  cursor:not-allowed; 
+}
+
+/* pequena melhoria visual quando ganha */
 .slot-grid.win .cell{
   transition: transform 220ms, box-shadow 220ms;
 }
+
 .slot-grid.win .cell.winner{
   transform: scale(1.06);
   box-shadow: 0 18px 30px rgba(255,178,77,0.16);
@@ -255,8 +292,10 @@
 
 /* Responsividade */
 @media (max-width:440px){
-  .slot-root{ padding:16px; max-width:360px; }
-  .cell{ min-height: 64px; font-size:34px; }
-  .cell img.symbol{ width: 60%; }
+  .slot-root{ padding:14px; max-width:360px; }
+  .cell{ min-height: 80px; font-size:38px; }
+  .cell img.symbol{ width: 64%; }
+  .pill-play{ padding:12px 24px; font-size:16px; }
+  .coin-value{ padding:5px 7px; }
   .slot-controls button{ padding:8px 10px; font-size:14px; }
 }
