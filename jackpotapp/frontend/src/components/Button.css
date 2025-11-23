@@ -1,5 +1,7 @@
-button {
+.form-button {
+    width: 100%;
     background-image: linear-gradient(to bottom, #FFD84C, #FFA726);
     border-radius: 0.5rem;
     border: none;
+    padding: 0.4rem;
 }
