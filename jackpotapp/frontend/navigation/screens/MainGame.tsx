@@ -20,6 +20,8 @@ const AVAILABLE_SYMBOLS: SymbolIcon[] = [
 function randomSymbol(): SymbolIcon {
 	return AVAILABLE_SYMBOLS[Math.floor(Math.random() * AVAILABLE_SYMBOLS.length)];
 }
+const SPIN_DURATION_MS = 1500; // duração total do giro em ms (menor = mais rápido)
+const SPIN_ANIMATION_DURATION_MS = 1500; // duração da animação CSS por loop em ms
 
 function createRandomBoard(rows = 3, cols = 3): SymbolIcon[][] {
 	const board: SymbolIcon[][] = [];
@@ -56,7 +58,7 @@ export default function MainGame() {
 	const ROWS = 3;
 	const COLS = 3;
 
-	const [board, setBoard] = useState<Board>(() => createRandomBoard(ROWS, COLS));
+	const [board] = useState<Board>(() => createRandomBoard(ROWS, COLS));
 	const [displayedBoard, setDisplayedBoard] = useState<Board>(() => createRandomBoard(ROWS, COLS));
 	const [spinning, setSpinning] = useState(false);
 	const [winners, setWinners] = useState<boolean[][]>(() =>
@@ -69,66 +71,27 @@ export default function MainGame() {
 	const [winnings, setWinnings] = useState(0);
 
 	const intervalsRef = useRef<number[]>([]);
-	const finishedRef = useRef(0);
 
 	function handleSpin() {
 		if (spinning) return;
-		// prepara o giro: duração aleatória por coluna
-		const durations = Array.from({ length: COLS }, (_, c) => 900 + c * 220 + Math.floor(Math.random() * 400));
-		const next = createRandomBoard(ROWS, COLS);
-
-		// cria buffers começando pelos símbolos atuais da coluna e adiciona símbolos extras para o giro
-		const buffers = Array.from({ length: COLS }, (_, c) => {
-			const columnStart: SymbolIcon[] = Array.from({ length: ROWS }, (_, r) => board[r][c]);
-			const extraCount = 8 + Math.floor(Math.random() * 8);
-			const extras: SymbolIcon[] = Array.from({ length: extraCount }, () => randomSymbol());
-			return [...columnStart, ...extras];
-		});
-
-		// reseta contadores e limpa intervalos antigos
-		finishedRef.current = 0;
-		intervalsRef.current.forEach((id) => clearInterval(id));
-		intervalsRef.current = [];
-
+		// duração fixa do giro (configurável acima com SPIN_DURATION_MS)
 		setSpinning(true);
 		setHasSpun(true);
 
-		// inicia o giro por coluna atualizando o displayedBoard rapidamente
-		const newDisplayed = displayedBoard.map((r) => r.slice());
-		buffers.forEach((buffer, c) => {
-			let offset = 0;
-			const tickMs = 60 + Math.floor(Math.random() * 60);
-			const intervalId = window.setInterval(() => {
-				// atualiza a coluna usando o buffer a partir do offset
-				const colView = Array.from({ length: ROWS }, (_, r) => buffer[(offset + r) % buffer.length]);
-				for (let r = 0; r < ROWS; r++) newDisplayed[r][c] = colView[r];
-				setDisplayedBoard(prev => {
-					const copy = prev.map(row => row.slice());
-					for (let r = 0; r < ROWS; r++) copy[r][c] = colView[r];
-					return copy;
-				});
-				offset = (offset + 1) % buffer.length;
-			}, tickMs);
-			intervalsRef.current[c] = intervalId as unknown as number;
-
-			// para o giro da coluna após o tempo e aplica o resultado final
-			setTimeout(() => {
-				clearInterval(intervalsRef.current[c]);
-				// aplica a coluna final baseada no board 'next' (resultado final)
-				const finalCol = Array.from({ length: ROWS }, (_, r) => next[r][c]);
-				setDisplayedBoard(prev => {
-					const copy = prev.map(row => row.slice());
-					for (let r = 0; r < ROWS; r++) copy[r][c] = finalCol[r];
-					return copy;
-				});
-				// quando todas as colunas terminarem, aplica o board final e encerra o giro
-				finishedRef.current += 1;
-				if (finishedRef.current === COLS) {
-					setBoard(next);
-					setSpinning(false);
-				}
-			}, durations[c]);
-		});
+		const total = SPIN_DURATION_MS;
+		// visual-only spin: não altera o board; avalia o board atual após o tempo total
+		setTimeout(() => {
+			// ensure spinning flag is cleared first so UI becomes responsive even if evaluation fails
+			setSpinning(false);
+			try {
+				const result = evaluateBoard(board);
+				setWinners(result.winners);
+				setIsWin(result.isWin);
+				setWinSymbol(result.symbol ?? null);
+			} catch (err) {
+				console.error("Error evaluating board after spin:", err);
+			}
+		}, total);
 	}
 
 	useEffect(() => {
@@ -161,7 +124,7 @@ export default function MainGame() {
 						<div key={col} className={`slot-column ${isColSpinning ? 'spinning' : ''}`}>
 							<div
 								className={`reel-track ${isColSpinning ? 'spinning' : ''}`}
-								style={isColSpinning ? { animationDuration: `${[800,1200,1600][col]}ms` } : undefined}
+										style={isColSpinning ? { animationDuration: `${SPIN_ANIMATION_DURATION_MS}ms` } : undefined}
 							>
 								{Array.from({ length: 3 }, (_, row) => {
 									const sym = (spinning ? displayedBoard : board)?.[row]?.[col];
