@@ -26,9 +26,10 @@ class LoginView(APIView):
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
         password = serializer.validated_data['password']
-        user = authenticate(request, username=username, password=password)
+        # Autentica usando email como username
+        user = authenticate(request, username=email, password=password)
 
         if user is not None:
             return Response({'success': True, 'user': UserSerializer(user).data}, status=status.HTTP_200_OK)
