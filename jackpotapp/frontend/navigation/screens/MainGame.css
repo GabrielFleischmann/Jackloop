@@ -25,17 +25,6 @@
   text-shadow: 0 2px 0 rgba(0,0,0,0.6);
 }
 
-/* Infos */
-.slot-info{
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 14px;
-  padding: 0 6px;
-  color: #f4e7d6;
-  font-weight: 600;
-}
-
 /* Cartão que segura o quadro de dentro: fundo com borda laranja arredondada */
 .slot-grid{
   display: flex;
@@ -70,21 +59,21 @@
   padding: 28px;
   border-radius: 22px;
   background: linear-gradient(180deg,#25071a, #2a0a2e);
-  border: 3px solid #f2b24d; /* thicker gold border */
+  border: 3px solid #f2b24d; 
   box-shadow: 0 14px 40px rgba(0,0,0,0.8);
 }
 
 /* Imagem do símbolo dentro da célula: mantém proporção */
 .cell img.symbol{
-  width: 86%;       /* ajuste para preencher melhor a coluna */
+  width: 86%;       
   height: 200px;
   max-height: 90%;
   object-fit: contain;
-  display: center;
+  display: block;
   pointer-events: none;
 }
 
-/* divisores verticais entre colunas*/
+/* divisores verticais entre colunas */
 .slot-grid::after{
   content: "";
   position: absolute;
@@ -93,11 +82,8 @@
   width: 2px;
   background: rgba(255,255,255,0.02);
   pointer-events: none;
-}
-
-.slot-grid::after{ 
-  left: calc(66.666%); 
-  transform: translateX(-1px); 
+  left: calc(66.666%);
+  transform: translateX(-1px);
 }
 
 /* colunas caça niqueis*/
@@ -155,7 +141,7 @@
 /* controles */
 .controls-wrapper{
   display:flex;
-  align-items:center center;
+  align-items: center;
   margin-top: 15px;
   max-width: 1000px;
   margin-left: 270px;
@@ -171,7 +157,7 @@
 
 /*quadrado da moeda*/
 .coin-box{
-   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
   border: 2px solid rgba(247, 151, 26, 0.651);
   outline: 1px solid rgba(245, 140, 2, 0.877);
   border-radius: 10px;
@@ -185,9 +171,6 @@
 
 .coin-ico{
   font-size:20px; 
-  margin-left: -10px;
-  margin-right: 10px;
-
 }
 
 .coin-line{
@@ -239,7 +222,7 @@
   font-weight:700; 
   color:#ffa723; 
   border: 2px solid rgba(247, 151, 26, 0.651);
-  background:   rgba(0, 0, 0, 0.15); 
+  background:rgba(0, 0, 0, 0.15); 
   padding:10px 24px; 
   border-radius:5px; 
   margin-right: 80px

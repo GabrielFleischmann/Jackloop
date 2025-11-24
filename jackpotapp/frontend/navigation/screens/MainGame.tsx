@@ -20,8 +20,6 @@ const AVAILABLE_SYMBOLS: SymbolIcon[] = [
 function randomSymbol(): SymbolIcon {
 	return AVAILABLE_SYMBOLS[Math.floor(Math.random() * AVAILABLE_SYMBOLS.length)];
 }
-const SPIN_DURATION_MS = 1500; // duração total do giro em ms (menor = mais rápido)
-const SPIN_ANIMATION_DURATION_MS = 1500; // duração da animação CSS por loop em ms
 
 function createRandomBoard(rows = 3, cols = 3): SymbolIcon[][] {
 	const board: SymbolIcon[][] = [];
@@ -57,8 +55,13 @@ function evaluateBoard(board: Board) {
 export default function MainGame() {
 	const ROWS = 3;
 	const COLS = 3;
+	// quantas linhas invisíveis (cópias) renderizar por coluna para criar o efeito de reel longo
+	const DUPLICATE_COPIES = 25;
 
-	const [board] = useState<Board>(() => createRandomBoard(ROWS, COLS));
+	// array de durações (ms) usadas para o inline animationDuration de cada coluna
+	const [animationDurations, setAnimationDurations] = useState<number[]>(() => Array.from({ length: COLS }, () => 600));
+
+	const [board, setBoard] = useState<Board>(() => createRandomBoard(ROWS, COLS));
 	const [displayedBoard, setDisplayedBoard] = useState<Board>(() => createRandomBoard(ROWS, COLS));
 	const [spinning, setSpinning] = useState(false);
 	const [winners, setWinners] = useState<boolean[][]>(() =>
@@ -68,23 +71,46 @@ export default function MainGame() {
 	const [winSymbol, setWinSymbol] = useState<SymbolIcon | null>(null);
 	const [hasSpun, setHasSpun] = useState(false);
 	const [displayBet, setDisplayBet] = useState(10);
+	const [displayCredit, setDisplayCredit] = useState(10);
 	const [winnings, setWinnings] = useState(0);
 
 	const intervalsRef = useRef<number[]>([]);
 
 	function handleSpin() {
 		if (spinning) return;
-		// duração fixa do giro (configurável acima com SPIN_DURATION_MS)
+		// gera durações randômicas por coluna (ms) e também animações por-loop randômicas
+		const durations = Array.from({ length: COLS }, (_, c) => 2000 + c * 200 + Math.floor(Math.random() * 800));
+		const anims = Array.from({ length: COLS }, () => 2000 + Math.floor(Math.random() * 400));
+		setAnimationDurations(anims);
+
+		// gerar o novo board que será o resultado final do giro
+		const newBoard = createRandomBoard(ROWS, COLS);
+		setBoard(newBoard);
+
 		setSpinning(true);
+
+		// iniciar animação visual: atualizar displayedBoard constantemente durante o spin
+		intervalsRef.current.forEach((id) => clearInterval(id));
+		intervalsRef.current = [];
+
+		const intervalId = window.setInterval(() => {
+			setDisplayedBoard(createRandomBoard(ROWS, COLS));
+		}, 100);
+		intervalsRef.current.push(intervalId);
+
 		setHasSpun(true);
 
-		const total = SPIN_DURATION_MS;
-		// visual-only spin: não altera o board; avalia o board atual após o tempo total
+		const total = Math.max(...durations);
+		// ao terminar a animação, parar o spin e avaliar o novo board
 		setTimeout(() => {
-			// ensure spinning flag is cleared first so UI becomes responsive even if evaluation fails
 			setSpinning(false);
+			// parar animação visual
+			intervalsRef.current.forEach((id) => clearInterval(id));
+			intervalsRef.current = [];
+			// mostrar o resultado real
+			setDisplayedBoard(newBoard);
 			try {
-				const result = evaluateBoard(board);
+				const result = evaluateBoard(newBoard);
 				setWinners(result.winners);
 				setIsWin(result.isWin);
 				setWinSymbol(result.symbol ?? null);
@@ -117,14 +143,13 @@ export default function MainGame() {
 		<div className="slot-root">
 			<div className="slot-frame">
 				<div className={"slot-grid" + (isWin ? " win" : "")}>
-				{/* renderiza as colunas para permitir um painel de fundo contínuo */}
 				{Array.from({ length: 3 }, (_, col) => {
 					const isColSpinning = spinning; 
 					return (
 						<div key={col} className={`slot-column ${isColSpinning ? 'spinning' : ''}`}>
 							<div
 								className={`reel-track ${isColSpinning ? 'spinning' : ''}`}
-										style={isColSpinning ? { animationDuration: `${SPIN_ANIMATION_DURATION_MS}ms` } : undefined}
+									style={isColSpinning ? { animationDuration: `${animationDurations[col]}ms` } : undefined}
 							>
 								{Array.from({ length: 3 }, (_, row) => {
 									const sym = (spinning ? displayedBoard : board)?.[row]?.[col];
@@ -137,9 +162,10 @@ export default function MainGame() {
 									);
 								})}
 								{isColSpinning && (
-									// duplica para criar um giro contínuo sem corte
-									Array.from({ length: 3 }, (_, row) => {
-										const sym = (spinning ? displayedBoard : board)?.[row]?.[col];
+									// duplica para criar um giro contínuo sem corte (usa módulo para índices válidos)
+									Array.from({ length: DUPLICATE_COPIES }, (_, row) => {
+										const idx = row % ROWS;
+										const sym = (spinning ? displayedBoard : board)?.[idx]?.[col];
 										return (
 											<div key={`dup-${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}`}>
 												<img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
@@ -161,7 +187,7 @@ export default function MainGame() {
 								<div className="coin-line">
 									<span className="coin-ico">🪙</span>
 								</div>
-								<span className="coin-value" id="display-bet" data-role="display-bet">{displayBet}</span>
+								<span className="coin-value" id="display-bet" data-role="display-bet">{displayCredit}</span>
 							</div>
 							<button
 								id="btn-decrease-bet"
