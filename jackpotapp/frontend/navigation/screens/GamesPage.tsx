@@ -1,6 +1,7 @@
 import "./GamesPage.css";
 import Game from "../../src/components/Game";
 import MainGameThumbnail from "../../src/assets/Thumbnails/MainGameThumbnail.svg"
+import screen_gameExtra from "../../src/assets/Thumbnails/screen_gameExtra.svg"
 
 export default function GamesPage() {
   return (
@@ -11,7 +12,7 @@ export default function GamesPage() {
 
        <div className="games-list">
         <Game image={MainGameThumbnail} route="/main-game" />
-        <Game image="/assets/thumb2.png" route="/extra-game" />
+        <Game image={screen_gameExtra} route="/extra-game" />
       </div>
     </>
   );

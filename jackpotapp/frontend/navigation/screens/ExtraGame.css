@@ -1,0 +1,147 @@
+:root {
+    --primary-color:#372258;
+    --secondary-color:#202020;
+    --sub-color:#4e2c85;
+    --accent-color:#929292;
+    --text-color:#FFFFFF;
+    --other: #FFAB4C;
+}
+
+.caixaJogo{
+  position: relative;
+  width: 55%;
+  height: 65%;
+  margin: 50px auto;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #000000,var(--primary-color), #1A0030);
+  border: 2px solid var(--sub-color);
+  border-radius: 10px;
+}
+
+.caixaJogo h1{
+  color: var(--other);
+  font-family: "Inter", sans-serif;
+  gap: 20px;
+  font-size: 40px;
+  text-shadow: 0 6px 0 #4d3316;
+  margin: 15px;
+  margin-top: 75px;
+}
+.caixaJogo h2{
+  color: var(--accent-color);
+  font-family: "Inter", sans-serif;
+  gap: 10px;
+  font-size: 16px;
+  margin: 10px;
+}
+
+.caixaInput {
+    width: 30%;
+    height: 30%;
+    margin: 10px auto;   
+    display: flex;     
+    justify-content: center; 
+    align-items: center; 
+    flex-direction: column;
+}
+
+.botaoApostar{
+    padding: 15px 90px;
+    color:var(--other);
+    background-color: var(--primary-color);
+    border: 2px solid var(--other);
+    border-radius: 12px;
+    font-family: "Inter", sans-serif;
+    font-weight: bold;
+    margin: 10px;
+    font-size: 30px;
+    box-shadow: 0 0 8px #8a2be2;
+    cursor: pointer;
+}
+
+.caixaJogo button:hover {
+  color:#ebb577;
+  background-color: #7853b3;
+  border: 2px solid #ebb577;
+  
+}
+
+.mensagem {
+    color: var(--accent-color);
+    font-family: "Inter", sans-serif;
+    gap: 10px;
+    font-size: 10px;
+    margin: 10px;
+}
+
+.caixaInput input {
+  width: 80%;
+  height: 20%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  box-shadow: 0 0 8px #8a2be2;
+}
+
+.caixaInput input:focus {
+  box-shadow: 0 0 12px #b266ff;
+}
+
+.botaoInfo {
+  position: absolute;
+  padding: 15px 10px;
+  bottom: 10px;    
+  right: 10px;  
+  color:var(--other);
+  background-color: var(--primary-color);
+  border: 2px solid var(--other);
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: bold;
+  margin: 10px;
+  cursor: pointer; 
+  font-size: 10px; 
+}
+
+
+.fundoEscurecido {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.janelaAviso {
+  background: #000000;
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 0 15px #8a2be2;
+
+}
+
+.janelaAviso button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  color:var(--other);
+  background-color: var(--primary-color);
+  border: 2px solid var(--other);
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: bold;
+}
