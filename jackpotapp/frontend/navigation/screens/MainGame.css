@@ -1,0 +1,88 @@
+.main-game-root {
+	padding: 16px;
+	font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.main-header {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.user-badge {
+	background: #0b6efd;
+	color: white;
+	padding: 6px 10px;
+	border-radius: 6px;
+}
+
+.open-login {
+	margin-left: auto;
+}
+
+.login-overlay {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+
+.login-modal {
+	background: #fff;
+	padding: 20px;
+	width: 320px;
+	border-radius: 8px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.login-form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.login-form label {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 14px;
+}
+
+.login-form input {
+	padding: 8px 10px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+}
+
+.login-actions {
+	display: flex;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+.btn-primary {
+	background: #0b6efd;
+	color: white;
+	padding: 8px 12px;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.btn-secondary {
+	background: transparent;
+	color: #333;
+	padding: 8px 12px;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.login-error {
+	color: #b00020;
+	font-size: 13px;
+}
+
