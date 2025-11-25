@@ -73,50 +73,42 @@ export default function ModalLogin({
       aria-modal="true"
       aria-labelledby="login-title"
     >
-      <div className="login-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="login-modal custom-modal" onClick={(e) => e.stopPropagation()}>
         <div className="login-modal-header">
           <img src={Logo} alt="Jackloop Logo" className="modal-logo" />
         </div>
-        <h2 id="login-title">Login</h2>
-        <form onSubmit={handleLogin} className="login-form">
-          <label>
-            Email
-            <input
-              ref={emailRef}
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-              required
-            />
-          </label>
-          <label>
-            Senha
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={loading}
-              required
-            />
-          </label>
+        <h2 id="login-title" className="custom-login-title">Login</h2>
+        <form onSubmit={handleLogin} className="login-form custom-login-form">
+          <input
+            ref={emailRef}
+            type="email"
+            placeholder="E-mail"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
+            required
+            className="custom-input"
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={loading}
+            required
+            className="custom-input"
+          />
 
           {error && <div className="login-error">{error}</div>}
 
-          <div className="login-actions">
-            <button type="submit" disabled={loading} className="btn-primary">
-              {loading ? "Entrando..." : "Entrar"}
-            </button>
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={onClose}
-              disabled={loading}
-            >
-              Cancelar
-            </button>
-          </div>
+          <button type="submit" disabled={loading} className="btn-primary custom-btn-primary">
+            {loading ? "Entrando..." : "Entrar"}
+          </button>
         </form>
+        <div className="custom-create-account">
+          <a href="#" className="custom-link">Criar conta</a>
+        </div>
+        <div className="custom-warning">Este jogo é apenas recreativo e não envolve apostas reais.</div>
       </div>
     </div>
   );
