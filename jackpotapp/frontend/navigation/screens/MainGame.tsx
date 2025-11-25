@@ -79,8 +79,8 @@ export default function MainGame() {
 	function handleSpin() {
 		if (spinning) return;
 		// gera durações randômicas por coluna (ms) e também animações por-loop randômicas
-		const durations = Array.from({ length: COLS }, (_, c) => 2000 + c * 200 + Math.floor(Math.random() * 800));
-		const anims = Array.from({ length: COLS }, () => 2000 + Math.floor(Math.random() * 400));
+		const durations = Array.from({ length: COLS }, (_, c) => 1800 + c * 200 + Math.floor(Math.random() * 800));
+		const anims = Array.from({ length: COLS }, () => 2500 + Math.floor(Math.random() * 400));
 		setAnimationDurations(anims);
 
 		// gerar o novo board que será o resultado final do giro
@@ -95,7 +95,7 @@ export default function MainGame() {
 
 		const intervalId = window.setInterval(() => {
 			setDisplayedBoard(createRandomBoard(ROWS, COLS));
-		}, 100);
+		}, 90);
 		intervalsRef.current.push(intervalId);
 
 		setHasSpun(true);
