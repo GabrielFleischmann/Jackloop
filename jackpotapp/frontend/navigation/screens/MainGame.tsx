@@ -139,6 +139,11 @@ export default function MainGame() {
 		};
 	}, []);
 
+	// garante que a aposta nunca seja maior que o crédito quando o crédito mudar
+	useEffect(() => {
+		if (displayBet > displayCredit) setDisplayBet(displayCredit);
+	}, [displayCredit]);
+
 	return (
 		<div className="slot-root">
 			<div className="slot-frame">
@@ -181,7 +186,7 @@ export default function MainGame() {
 
 				<div className="controls-wrapper">
 					<div className="controls-center">
-						<div className="bet-label">{displayBet} MOEDAS</div>
+						<div className="bet-label">APOSTA: R${displayBet}</div>
 						<div className="main-pill">
 							<div className="coin-box" id="coin-box" data-role="coin-box">
 								<div className="coin-line">
@@ -204,7 +209,7 @@ export default function MainGame() {
 								aria-label="Girar roleta"
 								className="pill-play"
 								onClick={handleSpin}
-								disabled={spinning}
+
 								>
 								{spinning ? '...' : 'GIRAR ROLETA'}
 							</button>
@@ -213,7 +218,8 @@ export default function MainGame() {
 								data-role="increase-bet"
 								aria-label="Aumentar aposta"
 								className="pill-btn"
-								onClick={() => setDisplayBet((v) => v + 1)}
+								onClick={() => setDisplayBet((v) => Math.min(displayCredit, v + 1))}
+								disabled={displayBet >= displayCredit}
 								>
 								+
 								</button>
