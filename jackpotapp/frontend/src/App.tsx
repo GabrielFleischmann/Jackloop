@@ -1,5 +1,5 @@
 // CSS e React
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom';
 import './App.css'
 
 // Componentes
