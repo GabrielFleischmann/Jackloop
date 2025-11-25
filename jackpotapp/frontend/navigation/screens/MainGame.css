@@ -1,16 +1,301 @@
-.main-game-root {
-  padding: 16px;
-  padding-top: 80px;
-  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+:root{
+  --bg-top: #291233;
+  --bg-bottom: #0b0210;
+  --card: #1b0f1d;
+  --accent: #ffb24d;
+  --muted: #cfc6d6;
+  --cell-bg: #1f1b2a;
+  --glass: rgba(255,255,255,0.04);
 }
 
-.main-header {
+/* Container geral */
+.slot-root{
+  max-width: 1280px;
+  margin: 18px auto 32px auto;
+  padding: 24px 28px 36px 28px;
+  color: var(--muted);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Header */
+.slot-root h1{
+  margin: 0 0 14px 0;
+  color: #ffe9b8;
+  font-size: 24px;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.6);
+}
+
+/* Infos */
+.slot-info{
   display: flex;
-  align-items: center;
-  gap: 12px;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 0 6px;
+  color: #f4e7d6;
+  font-weight: 600;
 }
 
-.main-content {
-  margin-top: 20px;
+/* Cartão que segura o quadro de dentro: fundo com borda laranja arredondada */
+.slot-grid{
+  display: flex;
+  gap: 20px;
+  padding: 18px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  box-shadow: 0 8px 28px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  border: 2px solid transparent;
+  position: relative;
 }
 
+/* quadro de dentro*/
+.slot-root .slot-grid {
+  width: 800px;
+  margin: 0 auto 20px auto;
+  padding: 36px;
+  border-radius: 0px;
+  background: linear-gradient(180deg,#1b0b20 0%, #843da5 100%);
+  box-shadow: 0 22px 48px rgba(0,0,0,0.80), inset 0 0 100px rgba(255,0,140,0.03);
+  border: 8px solid rgb(247, 166, 60);
+  display: flex;
+  gap: 20px;
+  height: 560px;
+  overflow: hidden;
+}
+
+/*quadro de fora*/
+.slot-frame{
+  width: 1600px;
+  margin: -5px -400px;
+  padding: 28px;
+  border-radius: 22px;
+  background: linear-gradient(180deg,#25071a, #2a0a2e);
+  border: 3px solid #f2b24d; /* thicker gold border */
+  box-shadow: 0 14px 40px rgba(0,0,0,0.8);
+}
+
+/* Imagem do símbolo dentro da célula: mantém proporção */
+.cell img.symbol{
+  width: 86%;       /* ajuste para preencher melhor a coluna */
+  height: 200px;
+  max-height: 90%;
+  object-fit: contain;
+  display: center;
+  pointer-events: none;
+}
+
+/* divisores verticais entre colunas*/
+.slot-grid::after{
+  content: "";
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  background: rgba(255,255,255,0.02);
+  pointer-events: none;
+}
+
+.slot-grid::after{ 
+  left: calc(66.666%); 
+  transform: translateX(-1px); 
+}
+
+/* colunas caça niqueis*/
+.slot-column{ 
+  flex:1; 
+  display:flex; 
+  flex-direction:column; 
+  gap:0; 
+  border-radius:8px; 
+  padding:0; 
+  align-items:stretch; 
+  justify-content:center; 
+  background: rgba(0,0,0,0.06); 
+  height:200%; 
+  position:relative; 
+}
+
+.slot-column .cell{ 
+  width:100%; 
+  display: flex; 
+  align-items:center; 
+  justify-content:center; 
+  padding:0; 
+  height: calc(100% / 3); 
+  box-sizing: border-box; 
+}
+
+/* animação caça niqueis */
+.reel-track{ 
+  display:flex; 
+  flex-direction:column; 
+  gap:0; overflow:visible; 
+  position:absolute; 
+  left:0; 
+  right:0;
+  top:0; 
+}
+
+.reel-track.spinning{ 
+  animation-name: reelScroll; 
+  animation-iteration-count: 1; 
+  animation-timing-function: cubic-bezier(.22,.9,.31,1); 
+  animation-fill-mode: forwards; 
+}
+
+@keyframes reelScroll{
+  from{ transform: translateY(0); }
+  to{ transform: translateY(-50%); }
+}
+
+.slot-column.spinning{ 
+  overflow:hidden; 
+}
+
+/* controles */
+.controls-wrapper{
+  display:flex;
+  align-items:center center;
+  margin-top: 15px;
+  max-width: 1000px;
+  margin-left: 270px;
+  padding: 12px 14px;
+}
+
+.controls-center{ 
+  flex:1; 
+  display:flex; 
+  flex-direction:column; 
+  align-items:center; 
+}
+
+/*quadrado da moeda*/
+.coin-box{
+   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  outline: 1px solid rgba(245, 140, 2, 0.877);
+  border-radius: 10px;
+  min-width:120px; 
+  padding: 10px 14px;
+  gap:10px; 
+  display:flex; 
+  align-items:center;  
+  justify-content:center;
+}
+
+.coin-ico{
+  font-size:20px; 
+  margin-left: -10px;
+  margin-right: 10px;
+
+}
+
+.coin-line{
+  border-right: solid rgba(247, 151, 26, 0.651); 
+  height: auto;
+  overflow: visible;
+}
+
+
+.coin-value{ 
+  font-size:20px; 
+  font-weight: 700;
+  color:#ffffff;  
+  padding:4px 10px; 
+  border-radius:8px; 
+}
+
+/* quadrado de ganhos */
+.gain-box{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.12));
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  outline: 1px solid rgba(245, 140, 2, 0.877);
+  border-radius: 10px;
+  min-width:120px; 
+  padding: 10px 14px;
+  gap:10px; 
+  display:flex; 
+  align-items:center;  
+  justify-content:center;
+}
+
+.gain-label{ 
+  color:#ffffff; 
+  font-weight:700; 
+  font-size:20px; 
+}
+
+.gain-value{ 
+  font-size:20px; 
+  font-weight: 700;
+  color:#ffffff;  
+  padding:4px 10px; 
+  border-radius:8px;  
+}
+
+/*quadrado sobre os ganhos*/
+.bet-label{ 
+  font-size:17px; 
+  font-weight:700; 
+  color:#ffa723; 
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  background:   rgba(0, 0, 0, 0.15); 
+  padding:10px 24px; 
+  border-radius:5px; 
+  margin-right: 80px
+}
+
+.main-pill{ 
+  display:flex; 
+  align-items:center; 
+  gap:10px; 
+
+}
+
+.pill-btn{ 
+  background: linear-gradient(180deg, rgba(255,255,255,0.02),rgba(0,0,0,0.12)); 
+  color:#ffa723; 
+  border-radius:10px; 
+  padding:10px 14px; 
+  border:none; 
+  font-weight:800; 
+  box-shadow:0 4px 0 rgba(0,0,0,0.2); 
+  cursor:pointer; 
+}
+
+.pill-play{ 
+  background: linear-gradient(180deg, rgba(255,255,255,0.02),rgba(0,0,0,0.12)); 
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.45); 
+  color:#ffa723; 
+  padding:16px 36px; 
+  font-weight:900; 
+  border-radius:14px; 
+  cursor:pointer; 
+  font-size:18px; 
+}
+
+.pill-play:disabled{ 
+  opacity:0.6; 
+  cursor:not-allowed; 
+}
+
+/* pequena melhoria visual quando ganha */
+.slot-grid.win .cell{
+  transition: transform 220ms, box-shadow 220ms;
+}
+
+.slot-grid.win .cell.winner{
+  transform: scale(1.06);
+  box-shadow: 0 18px 30px rgba(255,178,77,0.16);
+  outline: 2px solid rgba(255,178,77,0.12);
+}
+
+/* Responsividade */
+@media (max-width:440px){
+  .slot-root{ padding:14px; max-width:360px; }
+  .cell{ min-height: 80px; font-size:38px; }
+  .cell img.symbol{ width: 64%; }
+  .pill-play{ padding:12px 24px; font-size:16px; }
+  .coin-value{ padding:5px 7px; }
+  .slot-controls button{ padding:8px 10px; font-size:14px; }
+}
