@@ -10,9 +10,12 @@
 
 /* Container geral */
 .slot-root{
-  max-width: 1280px;
-  margin: 18px auto 32px auto;
-  padding: 24px 28px 36px 28px;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 90%;
+  justify-content: center;
+  margin-top: 30px;
   color: var(--muted);
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
@@ -34,7 +37,6 @@
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   box-shadow: 0 8px 28px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
   border: 2px solid transparent;
-  position: relative;
 }
 
 /* quadro de dentro*/
@@ -54,8 +56,8 @@
 
 /*quadro de fora*/
 .slot-frame{
-  width: 1600px;
-  margin: -5px -400px;
+  display: flex;
+  flex-direction: column;
   padding: 28px;
   border-radius: 22px;
   background: linear-gradient(180deg,#25071a, #2a0a2e);
@@ -143,9 +145,6 @@
   display:flex;
   align-items: center;
   margin-top: 15px;
-  max-width: 1000px;
-  margin-left: 270px;
-  padding: 12px 14px;
 }
 
 .controls-center{ 
@@ -271,14 +270,4 @@
   transform: scale(1.06);
   box-shadow: 0 18px 30px rgba(255,178,77,0.16);
   outline: 2px solid rgba(255,178,77,0.12);
-}
-
-/* Responsividade */
-@media (max-width:440px){
-  .slot-root{ padding:14px; max-width:360px; }
-  .cell{ min-height: 80px; font-size:38px; }
-  .cell img.symbol{ width: 64%; }
-  .pill-play{ padding:12px 24px; font-size:16px; }
-  .coin-value{ padding:5px 7px; }
-  .slot-controls button{ padding:8px 10px; font-size:14px; }
 }
