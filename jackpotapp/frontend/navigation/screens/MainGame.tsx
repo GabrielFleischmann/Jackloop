@@ -55,23 +55,6 @@ function evaluateBoard(board: Board) {
 }
 
 export default function MainGame() {
-<<<<<<< HEAD
-  return (
-    <>
-      <div className="main-game-root">
-        <header className="main-header">
-          <h1>Jogo Principal</h1>
-        </header>
-
-        <main className="main-content">
-          
-          <p>Bem-vindo ao Jackpot!</p>
-        </main>
-      </div>
-    </>
-  );
-}
-=======
 	const ROWS = 3;
 	const COLS = 3;
 
@@ -220,8 +203,3 @@ export default function MainGame() {
 		</div>
 	);
 }
-
-
-
-
->>>>>>> dev
