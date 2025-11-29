@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./ModalLogin.css";
 import Logo from "../assets/JackloopLogo.png";
+import api from "../services/api"; 
 
 interface ModalLoginProps {
   isOpen: boolean;
@@ -19,14 +20,12 @@ export default function ModalLogin({
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const emailRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();
     }
     if (isOpen) {
-      emailRef.current?.focus();
       document.addEventListener("keydown", onKey);
     } else {
       document.removeEventListener("keydown", onKey);
@@ -38,29 +37,27 @@ export default function ModalLogin({
     e.preventDefault();
     setLoading(true);
     setError("");
-    try {
-      const res = await fetch("/api/auth/login/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-      let data = null;
-      try {
-        data = await res.json();
-      } catch {
-        
-      }
-      if (res.ok && data?.user) {
-        onLoginSuccess(data.user);
+    
+    const loginData = {
+      email: email,
+      password: password
+    };
+
+      try {   
+         const response = await api.post("/users/auth/", loginData);
+
+        if (response.status === 200 && response.data.user) {
+        onLoginSuccess(response.data.user);
         setEmail("");
         setPassword("");
         onClose();
-      } else {
-        setError(data?.detail || data?.error || `Erro ${res.status}`);
+        } else {
+        setError(response.data.error || "Erro no login");
       }
-    } catch (err) {
-      setError("Erro de conexão com o servidor");
-    } finally {
+
+      } catch (err: any) {
+        setError(err.response?.data?.error || "Erro de conexão com o servidor");
+     } finally {
       setLoading(false);
     }
   }
@@ -80,9 +77,9 @@ export default function ModalLogin({
           <img src={Logo} alt="Jackloop Logo" className="modal-logo" />
         </div>
         <h2 id="login-title" className="custom-login-title">Login</h2>
+        
         <form onSubmit={handleLogin} className="login-form custom-login-form">
           <input
-            ref={emailRef}
             type="email"
             placeholder="E-mail"
             value={email}
@@ -107,17 +104,23 @@ export default function ModalLogin({
             {loading ? "Entrando..." : "Entrar"}
           </button>
         </form>
+        
         <div className="custom-create-account">
-          <a href="#" className="custom-link" 
-          onClick={(e) => {
-            e.preventDefault();
-            if (onShowSignUp) {
+          <a 
+            href="#" 
+            className="custom-link"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onShowSignUp) {
                 onShowSignUp();
-              onClose();
-            }
-          }}
-          >Criar conta</a>
+                onClose();
+              }
+            }}
+          >
+            Criar conta
+          </a>
         </div>
+        
         <div className="custom-warning">Este jogo é apenas recreativo e não envolve apostas reais.</div>
       </div>
     </div>

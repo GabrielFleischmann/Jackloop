@@ -1,11 +1,11 @@
-from rest_framework import viewsets
-from .models import User
-from .serializer import UserSerializer, LoginSerializer
 
-from django.contrib.auth import authenticate
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from rest_framework import viewsets
+from .models import User
+from .serializer import UserSerializer, LoginSerializer
+from django.contrib.auth import authenticate
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -15,6 +15,8 @@ class LoginView(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
+        
+              
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
