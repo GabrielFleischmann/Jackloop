@@ -60,16 +60,22 @@ function SignUpForm(){
             password: data.password
         }
 
-        const response = await api.post("/users", payload)
+        try {
+            const response = await api.post("/users/", payload)
             
-        if(response.status === 201 || response.status == 200) {
-            setOpenPopUpSucess(true); 
-            setTimeout(closePopUpSucess, 3000);
-            return;
-        } 
-        
-        setOpenPopUpError(true);
-        setTimeout(closePopUpError, 4000);
+            if(response.status === 201 || response.status == 200) {
+                setOpenPopUpSucess(true); 
+                setTimeout(closePopUpSucess, 3000);
+                return;
+            } 
+
+            setOpenPopUpError(true);
+            setTimeout(closePopUpError, 4000);
+            
+        } catch(err: any) {
+            setOpenPopUpError(true);
+            setTimeout(closePopUpError, 4000);
+        }
     }
         
     return (
