@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    "corsheaders",
+    'corsheaders',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,9 +55,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
 ]
-
-#durante dev
-CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -81,12 +79,27 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+try:
+    import oracledb
+    if not hasattr(oracledb, 'Binary') or not isinstance(getattr(oracledb, 'Binary', None), type):
+        oracledb.Binary = bytes
+        sys.modules["cx_Oracle"] = oracledb
+except ImportError:
+    pass
+
+WALLET_DIR = os.path.join(BASE_DIR, 'wallet')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-         'NAME': config('DB_NAME'),
-         'USER': config('DB_USER'),
-         'PASSWORD': config('DB_PASSWORD'),   
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'OPTIONS': {
+            "config_dir": WALLET_DIR,
+            "wallet_location": WALLET_DIR,
+            "wallet_password": "Ritter*123456"
+        }    
     }
 }
 
@@ -131,3 +144,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ALLOW_ALL_ORIGINS = True
