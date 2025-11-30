@@ -139,8 +139,8 @@ export default function MainGame() {
 				if (user) {
 					if (result.isWin) {
 						const winAmount = displayBet * 2;
-						setWinnings(prev => prev + displayBet);
 						const newBalance = displayCredit + winAmount;
+						setWinnings(prev => prev + winAmount);
 						setDisplayCredit(newBalance);
 
 						api.post('/coins/transactions/', {
@@ -152,7 +152,7 @@ export default function MainGame() {
 							window.dispatchEvent(new Event('balanceUpdated'));
 						}).catch((err: any) => console.error(err));
 					} else {
-						setWinnings(prev => prev - displayBet);
+						setWinnings(prev => prev);
 						const newBalance = displayCredit - displayBet;
 						setDisplayCredit(newBalance);
 
