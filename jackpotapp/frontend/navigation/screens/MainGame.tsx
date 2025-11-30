@@ -103,7 +103,7 @@ export default function MainGame() {
 		const durations = Array.from({ length: COLS }, (_, c) => 1800 + c * 200 + Math.floor(Math.random() * 800));
 		const anims = Array.from({ length: COLS }, () => 2500 + Math.floor(Math.random() * 400));
 		setAnimationDurations(anims);
-		
+
 		// gerar o novo board que será o resultado final do giro
 		const newBoard = createRandomBoard(ROWS, COLS);
 		setBoard(newBoard);
@@ -139,7 +139,7 @@ export default function MainGame() {
 				if (user) {
 					if (result.isWin) {
 						const winAmount = displayBet * 2;
-						setWinnings(winAmount);
+						setWinnings(prev => prev + displayBet);
 						const newBalance = displayCredit + winAmount;
 						setDisplayCredit(newBalance);
 
@@ -152,7 +152,7 @@ export default function MainGame() {
 							window.dispatchEvent(new Event('balanceUpdated'));
 						}).catch((err: any) => console.error(err));
 					} else {
-						setWinnings(0);
+						setWinnings(prev => prev - displayBet);
 						const newBalance = displayCredit - displayBet;
 						setDisplayCredit(newBalance);
 
@@ -219,7 +219,7 @@ export default function MainGame() {
 										);
 									})}
 									{isColSpinning && (
-									// duplica para criar um giro contínuo sem corte (usa módulo para índices válidos)
+										// duplica para criar um giro contínuo sem corte (usa módulo para índices válidos)
 										Array.from({ length: DUPLICATE_COPIES }, (_, row) => {
 											const idx = row % ROWS;
 											const sym = (spinning ? displayedBoard : board)?.[idx]?.[col];
