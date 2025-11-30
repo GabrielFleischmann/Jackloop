@@ -4,11 +4,13 @@ import Logo from "../assets/JackloopLogo.png";
 import ModalLogin from "./ModalLogin";
 import Modal from "./Modal";
 import SignUpForm from './SignUpForm';
+import api from "../services/api";
 
-export default function NavBar() {   
+export default function NavBar() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [openSignUpModal, setOpenSignUpModal] = useState(false);
   const [user, setUser] = useState<any | null>(null);
+  const [balance, setBalance] = useState<number | null>(null);
 
   const closeSignUpModal = () => {
     setOpenSignUpModal(false);
@@ -24,6 +26,20 @@ export default function NavBar() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (user && user.id) {
+      api.get(`/coins/balance/${user.id}/`)
+        .then(response => {
+          setBalance(response.data.balance);
+        })
+        .catch(error => {
+          console.error("Error fetching balance:", error);
+        });
+    } else {
+      setBalance(null);
+    }
+  }, [user]);
 
   function handleLoginSuccess(userData: any) {
     setUser(userData);
@@ -44,6 +60,11 @@ export default function NavBar() {
           {user ? (
             <>
               <span className="user-badge">{user.email}</span>
+              {balance !== null && (
+                <span className="user-balance" style={{ marginRight: '10px', color: '#FFD700', fontWeight: 'bold' }}>
+                  Coins: {balance}
+                </span>
+              )}
               <button className="button-logout" onClick={handleLogout}>
                 Sair
               </button>
@@ -55,32 +76,32 @@ export default function NavBar() {
                 onClick={() => setIsLoginOpen(true)}
               >
                 Login
-              </button> 
-              <button 
-                className="button-registrer" 
+              </button>
+              <button
+                className="button-registrer"
                 onClick={() => setOpenSignUpModal(true)}> Registre-se
               </button>
             </>
           )}
         </div>
       </div>
-      
+
       {openSignUpModal && (
         <Modal isOpen={openSignUpModal} closeModal={closeSignUpModal}>
           <SignUpForm />
         </Modal>
       )}
-      
+
       <ModalLogin
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         onLoginSuccess={handleLoginSuccess}
         onShowSignUp={() => {
-        setIsLoginOpen(false); 
-        setOpenSignUpModal(true); 
+          setIsLoginOpen(false);
+          setOpenSignUpModal(true);
         }}
 
       />
-    </> 
+    </>
   );
 }
