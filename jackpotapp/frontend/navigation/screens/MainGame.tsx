@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import "./MainGame.css";
+import api from "../../src/services/api";
 
 import starPng from "../../src/assets/Symbols/star.png";
 import diamondPng from "../../src/assets/Symbols/diamond.png";
@@ -73,16 +74,36 @@ export default function MainGame() {
 	const [displayBet, setDisplayBet] = useState(10);
 	const [displayCredit, setDisplayCredit] = useState(10);
 	const [winnings, setWinnings] = useState(0);
+	const [user, setUser] = useState<any | null>(null);
 
 	const intervalsRef = useRef<number[]>([]);
+
+	useEffect(() => {
+		const saved = localStorage.getItem("user");
+		if (saved) {
+			try {
+				const userData = JSON.parse(saved);
+				setUser(userData);
+				api.get(`/coins/balance/${userData.id}/`)
+					.then((response: any) => {
+						setDisplayCredit(response.data.balance);
+					})
+					.catch((err: any) => console.error(err));
+			} catch {
+				localStorage.removeItem("user");
+			}
+		}
+	}, []);
 
 	function handleSpin() {
 		if (spinning) return;
 		// gera durações randômicas por coluna (ms) e também animações por-loop randômicas
+		if (displayBet > displayCredit) return;
+
 		const durations = Array.from({ length: COLS }, (_, c) => 1800 + c * 200 + Math.floor(Math.random() * 800));
 		const anims = Array.from({ length: COLS }, () => 2500 + Math.floor(Math.random() * 400));
 		setAnimationDurations(anims);
-
+		
 		// gerar o novo board que será o resultado final do giro
 		const newBoard = createRandomBoard(ROWS, COLS);
 		setBoard(newBoard);
@@ -114,8 +135,39 @@ export default function MainGame() {
 				setWinners(result.winners);
 				setIsWin(result.isWin);
 				setWinSymbol(result.symbol ?? null);
+
+				if (user) {
+					if (result.isWin) {
+						const winAmount = displayBet * 2;
+						setWinnings(winAmount);
+						const newBalance = displayCredit + winAmount;
+						setDisplayCredit(newBalance);
+
+						api.post('/coins/transactions/', {
+							user: user.id,
+							amount: winAmount,
+							transaction_type: 'win',
+							description: 'Ganhou na roleta'
+						}).then(() => {
+							window.dispatchEvent(new Event('balanceUpdated'));
+						}).catch((err: any) => console.error(err));
+					} else {
+						setWinnings(0);
+						const newBalance = displayCredit - displayBet;
+						setDisplayCredit(newBalance);
+
+						api.post('/coins/transactions/', {
+							user: user.id,
+							amount: -displayBet,
+							transaction_type: 'purchase',
+							description: 'Perdeu na roleta'
+						}).then(() => {
+							window.dispatchEvent(new Event('balanceUpdated'));
+						}).catch((err: any) => console.error(err));
+					}
+				}
 			} catch (err) {
-				console.error("Error evaluating board after spin:", err);
+				console.error(err);
 			}
 		}, total);
 	}
@@ -148,40 +200,40 @@ export default function MainGame() {
 		<div className="slot-root">
 			<div className="slot-frame">
 				<div className={"slot-grid" + (isWin ? " win" : "")}>
-				{Array.from({ length: 3 }, (_, col) => {
-					const isColSpinning = spinning; 
-					return (
-						<div key={col} className={`slot-column ${isColSpinning ? 'spinning' : ''}`}>
-							<div
-								className={`reel-track ${isColSpinning ? 'spinning' : ''}`}
+					{Array.from({ length: 3 }, (_, col) => {
+						const isColSpinning = spinning;
+						return (
+							<div key={col} className={`slot-column ${isColSpinning ? 'spinning' : ''}`}>
+								<div
+									className={`reel-track ${isColSpinning ? 'spinning' : ''}`}
 									style={isColSpinning ? { animationDuration: `${animationDurations[col]}ms` } : undefined}
-							>
-								{Array.from({ length: 3 }, (_, row) => {
-									const sym = (spinning ? displayedBoard : board)?.[row]?.[col];
-									const isMiddleCell = row === 1;
-									const winnerClass = isWin && isMiddleCell ? ' winner' : '';
-									return (
-										<div key={`${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}${winnerClass}`}>
-											<img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
-										</div>
-									);
-								})}
-								{isColSpinning && (
-									// duplica para criar um giro contínuo sem corte (usa módulo para índices válidos)
-									Array.from({ length: DUPLICATE_COPIES }, (_, row) => {
-										const idx = row % ROWS;
-										const sym = (spinning ? displayedBoard : board)?.[idx]?.[col];
+								>
+									{Array.from({ length: 3 }, (_, row) => {
+										const sym = (spinning ? displayedBoard : board)?.[row]?.[col];
+										const isMiddleCell = row === 1;
+										const winnerClass = isWin && isMiddleCell ? ' winner' : '';
 										return (
-											<div key={`dup-${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}`}>
+											<div key={`${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}${winnerClass}`}>
 												<img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
 											</div>
 										);
-									})
-								)}
+									})}
+									{isColSpinning && (
+									// duplica para criar um giro contínuo sem corte (usa módulo para índices válidos)
+										Array.from({ length: DUPLICATE_COPIES }, (_, row) => {
+											const idx = row % ROWS;
+											const sym = (spinning ? displayedBoard : board)?.[idx]?.[col];
+											return (
+												<div key={`dup-${row}-${col}`} className={`cell${spinning ? ' spinning' : ''}`}>
+													<img src={sym?.src} alt={sym?.id ?? 'symbol'} className="symbol" />
+												</div>
+											);
+										})
+									)}
+								</div>
 							</div>
-						</div>
-					);
-				})}
+						);
+					})}
 				</div>
 
 				<div className="controls-wrapper">
@@ -200,9 +252,9 @@ export default function MainGame() {
 								aria-label="Diminuir aposta"
 								className="pill-btn"
 								onClick={() => setDisplayBet((v) => Math.max(1, v - 1))}
-								>
+							>
 								-
-								</button>
+							</button>
 							<button
 								id="btn-spin"
 								data-role="spin"
@@ -210,7 +262,7 @@ export default function MainGame() {
 								className="pill-play"
 								onClick={handleSpin}
 
-								>
+							>
 								{spinning ? '...' : 'GIRAR ROLETA'}
 							</button>
 							<button
@@ -220,9 +272,9 @@ export default function MainGame() {
 								className="pill-btn"
 								onClick={() => setDisplayBet((v) => Math.min(displayCredit, v + 1))}
 								disabled={displayBet >= displayCredit}
-								>
+							>
 								+
-								</button>
+							</button>
 							<div className="gain-box" id="gain-box" data-role="gain-box">
 								<span className="coin-ico">🪙</span>
 								<span className="gain-label">GANHOS</span>

@@ -41,6 +41,25 @@ export default function NavBar() {
     }
   }, [user]);
 
+  useEffect(() => {
+    const handleBalanceUpdate = () => {
+      if (user && user.id) {
+        api.get(`/coins/balance/${user.id}/`)
+          .then((response: any) => {
+            setBalance(response.data.balance);
+          })
+          .catch((error: any) => {
+            console.error("Error fetching balance:", error);
+          });
+      }
+    };
+
+    window.addEventListener('balanceUpdated', handleBalanceUpdate);
+    return () => {
+      window.removeEventListener('balanceUpdated', handleBalanceUpdate);
+    };
+  }, [user]);
+
   function handleLoginSuccess(userData: any) {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
