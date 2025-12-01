@@ -11,6 +11,7 @@ export default function NavBar() {
   const [openSignUpModal, setOpenSignUpModal] = useState(false);
   const [user, setUser] = useState<any | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
+  const [canClaimDaily, setCanClaimDaily] = useState(false);
 
   const closeSignUpModal = () => {
     setOpenSignUpModal(false);
@@ -34,7 +35,7 @@ export default function NavBar() {
           setBalance(response.data.balance);
         })
         .catch(error => {
-          console.error("Error fetching balance:", error);
+          console.error("Erro ao buscar saldo:", error);
         });
     } else {
       setBalance(null);
@@ -49,7 +50,7 @@ export default function NavBar() {
             setBalance(response.data.balance);
           })
           .catch((error: any) => {
-            console.error("Error fetching balance:", error);
+            console.error("Erro ao buscar saldo:", error);
           });
       }
     };
@@ -57,6 +58,26 @@ export default function NavBar() {
     window.addEventListener('balanceUpdated', handleBalanceUpdate);
     return () => {
       window.removeEventListener('balanceUpdated', handleBalanceUpdate);
+    };
+  }, [user]);
+
+  useEffect(() => {
+    const fetchDailyStatus = () => {
+      if (user && user.id) {
+        api.get(`/coins/daily/${user.id}/`)
+          .then((response: any) => {
+            setCanClaimDaily(response.data.can_claim_now);
+          })
+          .catch((error: any) => {
+            console.error("Erro ao buscar status diário:", error);
+          });
+      }
+    };
+
+    fetchDailyStatus();
+    window.addEventListener('balanceUpdated', fetchDailyStatus);
+    return () => {
+      window.removeEventListener('balanceUpdated', fetchDailyStatus);
     };
   }, [user]);
 
@@ -71,10 +92,35 @@ export default function NavBar() {
     localStorage.removeItem("user");
   }
 
+  function handleDailyCoins() {
+    if (user && user.id && canClaimDaily) {
+      api.post('/coins/daily/claim/', {
+        user: user.id
+      })
+        .then(() => {
+          window.dispatchEvent(new Event('balanceUpdated'));
+        })
+        .catch((error: any) => {
+          console.error("Erro ao coletar moedas diárias:", error);
+        });
+    }
+  }
+
   return (
     <>
       <div className="navbar">
-        <img src={Logo} className="navbar-logo" alt="Jackloop Logo" />
+        <div className="navbar-left">
+          <img src={Logo} className="navbar-logo" alt="Jackloop Logo" />
+          {user && (
+            <button
+              className="button-daily"
+              onClick={handleDailyCoins}
+              disabled={!canClaimDaily}
+            >
+              Moedas Diárias
+            </button>
+          )}
+        </div>
         <div className="navbar-buttons">
           {user ? (
             <>

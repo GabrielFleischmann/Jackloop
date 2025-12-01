@@ -72,7 +72,7 @@ export default function MainGame() {
 	const [winSymbol, setWinSymbol] = useState<SymbolIcon | null>(null);
 	const [hasSpun, setHasSpun] = useState(false);
 	const [displayBet, setDisplayBet] = useState(10);
-	const [displayCredit, setDisplayCredit] = useState(10);
+	const [displayCredit, setDisplayCredit] = useState<number | null>(null);
 	const [winnings, setWinnings] = useState(0);
 	const [user, setUser] = useState<any | null>(null);
 
@@ -98,7 +98,7 @@ export default function MainGame() {
 	function handleSpin() {
 		if (spinning) return;
 		// gera durações randômicas por coluna (ms) e também animações por-loop randômicas
-		if (displayBet > displayCredit) return;
+		if (displayCredit === null || displayBet > displayCredit) return;
 
 		const durations = Array.from({ length: COLS }, (_, c) => 1800 + c * 200 + Math.floor(Math.random() * 800));
 		const anims = Array.from({ length: COLS }, () => 2500 + Math.floor(Math.random() * 400));
@@ -139,7 +139,7 @@ export default function MainGame() {
 				if (user) {
 					if (result.isWin) {
 						const winAmount = displayBet * 2;
-						const newBalance = displayCredit + winAmount;
+						const newBalance = (displayCredit ?? 0) + winAmount;
 						setWinnings(prev => prev + winAmount);
 						setDisplayCredit(newBalance);
 
@@ -153,7 +153,7 @@ export default function MainGame() {
 						}).catch((err: any) => console.error(err));
 					} else {
 						setWinnings(prev => prev);
-						const newBalance = displayCredit - displayBet;
+						const newBalance = (displayCredit ?? 0) - displayBet;
 						setDisplayCredit(newBalance);
 
 						api.post('/coins/transactions/', {
@@ -193,7 +193,7 @@ export default function MainGame() {
 
 	// garante que a aposta nunca seja maior que o crédito quando o crédito mudar
 	useEffect(() => {
-		if (displayBet > displayCredit) setDisplayBet(displayCredit);
+		if (displayCredit !== null && displayBet > displayCredit) setDisplayBet(Math.max(1, displayCredit));
 	}, [displayCredit]);
 
 	return (
@@ -244,7 +244,7 @@ export default function MainGame() {
 								<div className="coin-line">
 									<span className="coin-ico">🪙</span>
 								</div>
-								<span className="coin-value" id="display-bet" data-role="display-bet">{displayCredit}</span>
+								<span className="coin-value" id="display-bet" data-role="display-bet">{displayCredit === null ? "---" : displayCredit}</span>
 							</div>
 							<button
 								id="btn-decrease-bet"
@@ -261,6 +261,7 @@ export default function MainGame() {
 								aria-label="Girar roleta"
 								className="pill-play"
 								onClick={handleSpin}
+								disabled={displayCredit === null || spinning || (displayCredit !== null && displayBet > displayCredit)}
 
 							>
 								{spinning ? '...' : 'GIRAR ROLETA'}
@@ -270,8 +271,8 @@ export default function MainGame() {
 								data-role="increase-bet"
 								aria-label="Aumentar aposta"
 								className="pill-btn"
-								onClick={() => setDisplayBet((v) => Math.min(displayCredit, v + 1))}
-								disabled={displayBet >= displayCredit}
+								onClick={() => setDisplayBet((v) => Math.min(displayCredit ?? 0, v + 1))}
+								disabled={displayCredit === null || displayBet >= displayCredit}
 							>
 								+
 							</button>
