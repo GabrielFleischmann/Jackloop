@@ -66,6 +66,7 @@ export default function ExtraGame() {
             type="range"
             min="1"
             max="500"
+            style={{ accentColor: "#FFAB4C" }}
             value={valor}
             onChange={(e) => setValor(Number(e.target.value))}
           />
