@@ -12,6 +12,7 @@ export default function NavBar() {
   const [user, setUser] = useState<any | null>(null);
   const [balance, setBalance] = useState<number | null>(null);
   const [canClaimDaily, setCanClaimDaily] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const closeSignUpModal = () => {
     setOpenSignUpModal(false);
@@ -98,6 +99,7 @@ export default function NavBar() {
         user: user.id
       })
         .then(() => {
+          setShowSuccessModal(true);
           window.dispatchEvent(new Event('balanceUpdated'));
         })
         .catch((error: any) => {
@@ -112,24 +114,26 @@ export default function NavBar() {
         <div className="navbar-left">
           <img src={Logo} className="navbar-logo" alt="Jackloop Logo" />
           {user && (
-            <button
-              className="button-daily"
-              onClick={handleDailyCoins}
-              disabled={!canClaimDaily}
-            >
-              Moedas Diárias
-            </button>
+            <>
+              <button
+                className="button-daily"
+                onClick={handleDailyCoins}
+                disabled={!canClaimDaily}
+              >
+                Moedas Diárias
+              </button>
+              {balance !== null && (
+                <span className="user-balance" style={{ marginLeft: '20px', color: '#FFD700', fontWeight: 'bold' }}>
+                  Moedas: {balance}
+                </span>
+              )}
+            </>
           )}
         </div>
         <div className="navbar-buttons">
           {user ? (
             <>
               <span className="user-badge">{user.email}</span>
-              {balance !== null && (
-                <span className="user-balance" style={{ marginRight: '10px', color: '#FFD700', fontWeight: 'bold' }}>
-                  Coins: {balance}
-                </span>
-              )}
               <button className="button-logout" onClick={handleLogout}>
                 Sair
               </button>
@@ -155,6 +159,19 @@ export default function NavBar() {
         <Modal isOpen={openSignUpModal} closeModal={closeSignUpModal}>
           <SignUpForm />
         </Modal>
+      )}
+
+      {showSuccessModal && (
+        <div className="fundoEscurecido">
+          <div className="janelaAviso">
+            <h1 style={{ marginTop: "0px", fontSize: "22px", color: "#FFAB4C" }}>Moedas Coletadas!</h1>
+            <p>
+              Você recebeu 100 moedas diárias!<br /><br />
+              Volte em 24 horas para coletar novamente.
+            </p>
+            <button onClick={() => setShowSuccessModal(false)}>Fechar</button>
+          </div>
+        </div>
       )}
 
       <ModalLogin

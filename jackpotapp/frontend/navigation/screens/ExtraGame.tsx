@@ -15,7 +15,6 @@ export default function ExtraGame() {
       try {
         setUser(JSON.parse(saved));
       } catch {
-        // Invalid data, ignore
       }
     }
   }, []);
@@ -31,7 +30,6 @@ export default function ExtraGame() {
     if (valor === secreto) {
       setMensagem("Você acertou!!!!!");
 
-      // Award 100 coins if user is logged in
       if (user && user.id) {
         api.post('/coins/transactions/', {
           user: user.id,

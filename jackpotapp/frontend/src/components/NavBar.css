@@ -80,3 +80,49 @@
 .button-daily:disabled:hover {
   transform: none;
 }
+
+.fundoEscurecido {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.janelaAviso {
+  background: #000000;
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 0 15px #8a2be2;
+}
+
+.janelaAviso button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  color: #FFAB4C;
+  background-color: #372258;
+  border: 2px solid #FFAB4C;
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.janelaAviso button:hover {
+  color: #ebb577;
+  background-color: #7853b3;
+  border: 2px solid #ebb577;
+}
+
+.fundoEscurecido p {
+  padding-top: 15px;
+}
