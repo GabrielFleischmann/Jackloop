@@ -1,11 +1,23 @@
 import "./ExtraGame.css";
 import React, { useState, useEffect } from "react";
+import api from "../../src/services/api";
 
 export default function ExtraGame() {
   const [valor, setValor] = useState(250);
   const [secreto, setSecreto] = useState(1);
-  const [mensagem, setMensagem] = useState(""); 
-  const [mostrarInfo, setMostrarInfo] = useState(false);    
+  const [mensagem, setMensagem] = useState("");
+  const [mostrarInfo, setMostrarInfo] = useState(false);
+  const [user, setUser] = useState<any | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("user");
+    if (saved) {
+      try {
+        setUser(JSON.parse(saved));
+      } catch {
+      }
+    }
+  }, []);
 
   useEffect(() => {
     const numero = Math.floor(Math.random() * 500) + 1;
@@ -17,7 +29,21 @@ export default function ExtraGame() {
   function apostar() {
     if (valor === secreto) {
       setMensagem("Você acertou!!!!!");
-      /*dps coloca a lógica de ganhar moedas aqui, não é pra ter lógica de perder moedas nessa página */
+
+      if (user && user.id) {
+        api.post('/coins/transactions/', {
+          user: user.id,
+          amount: 100,
+          transaction_type: 'win',
+          description: 'Ganhou no jogo de adivinhação'
+        })
+          .then(() => {
+            window.dispatchEvent(new Event('balanceUpdated'));
+          })
+          .catch((error: any) => {
+            console.error("Erro ao adicionar moedas:", error);
+          });
+      }
     } else {
       setMensagem(`Você errou! O número era ${secreto}`);
     }
@@ -46,23 +72,23 @@ export default function ExtraGame() {
         </div>
         <div><button className="botaoApostar" onClick={apostar}>Apostar</button></div>
         <div className="mensagem"><p>{mensagem}</p></div>
-        
+
         <div>
           <button className="botaoInfo" onClick={() => setMostrarInfo(true)}>!</button>
           {mostrarInfo && (
-              <div className="fundoEscurecido">
-                <div className="janelaAviso">
-                  <h1 style={{ marginTop: "0px", fontSize: "22px" }}>Como funciona?</h1>
-                  <p>
-                    Escolha um número entre 1 e 500 movendo a barrinha.<br /><br />
-                    Clique em "Apostar" para tentar adivinhar.<br /><br />
-                    Se você acertar o número secreto, ganhará moedas!
-                    Se errar, não se preocupe, poderá tentar novamente com um novo número secreto.
-                  </p>
-                  <button onClick={() => setMostrarInfo(false)}>Fechar</button>
-                </div>
+            <div className="fundoEscurecido">
+              <div className="janelaAviso">
+                <h1 style={{ marginTop: "0px", fontSize: "22px" }}>Como funciona?</h1>
+                <p>
+                  Escolha um número entre 1 e 500 movendo a barrinha.<br /><br />
+                  Clique em "Apostar" para tentar adivinhar.<br /><br />
+                  Se você acertar o número secreto, ganhará 100 moedas!
+                  Se errar, não se preocupe, poderá tentar novamente com um novo número secreto.
+                </p>
+                <button onClick={() => setMostrarInfo(false)}>Fechar</button>
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
     </>
