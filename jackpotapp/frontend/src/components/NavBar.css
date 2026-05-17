@@ -1,0 +1,128 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background-color: #222;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-left: 15px;
+}
+
+.navbar-logo {
+  height: 75px;
+}
+
+.navbar-buttons {
+  display: flex;
+  gap: 10px;
+  padding-right: 10px;
+}
+
+.button-registrer {
+  height: 45px;
+  width: 140px;
+  border: 2px solid #929292;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #372258;
+}
+
+.button-login {
+  height: 45px;
+  width: 80px;
+  border: 2px solid #929292;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #202020;
+}
+
+.button-daily {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.12));
+  color: #ffa723;
+  padding: 12px 24px;
+  font-weight: 900;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 16px;
+  border: 2px solid #FFAB4C;
+  font-family: "Inter", sans-serif;
+  transition: transform 0.1s;
+}
+
+.button-daily:hover {
+  transform: translateY(-2px);
+}
+
+.button-daily:active {
+  transform: translateY(2px);
+}
+
+.button-daily:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.button-daily:disabled:hover {
+  transform: none;
+}
+
+.fundoEscurecido {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.janelaAviso {
+  background: #000000;
+  color: white;
+  padding: 20px 30px;
+  border-radius: 12px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 0 15px #8a2be2;
+}
+
+.janelaAviso button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  color: #FFAB4C;
+  background-color: #372258;
+  border: 2px solid #FFAB4C;
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.janelaAviso button:hover {
+  color: #ebb577;
+  background-color: #7853b3;
+  border: 2px solid #ebb577;
+}
+
+.fundoEscurecido p {
+  padding-top: 15px;
+}

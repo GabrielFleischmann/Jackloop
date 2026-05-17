@@ -1,0 +1,275 @@
+:root {
+  --bg-top: #291233;
+  --bg-bottom: #0b0210;
+  --card: #1b0f1d;
+  --accent: #ffb24d;
+  --muted: #cfc6d6;
+  --cell-bg: #1f1b2a;
+  --glass: rgba(255, 255, 255, 0.04);
+}
+
+/* Container geral */
+.slot-root {
+  display: flex;
+  justify-content: flex-start;
+  height: 90%;
+  width: 100%;
+  margin-top: 30px;
+  margin-left: 15%;
+  color: var(--muted);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Header */
+.slot-root h1 {
+  margin: 0 0 14px 0;
+  color: #ffe9b8;
+  font-size: 24px;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Cartão que segura o quadro de dentro: fundo com borda laranja arredondada */
+.slot-grid {
+  display: flex;
+  gap: 20px;
+  padding: 18px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  border: 2px solid transparent;
+}
+
+/* quadro de dentro*/
+.slot-root .slot-grid {
+  width: 800px;
+  margin: 0 auto 20px auto;
+  padding: 36px;
+  border-radius: 0px;
+  background: linear-gradient(180deg, #1b0b20 0%, #843da5 100%);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.80), inset 0 0 100px rgba(255, 0, 140, 0.03);
+  border: 8px solid rgb(247, 166, 60);
+  display: flex;
+  gap: 20px;
+  height: 560px;
+  overflow: hidden;
+}
+
+/*quadro de fora*/
+.slot-frame {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  padding: 28px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #25071a, #2a0a2e);
+  border: 3px solid #f2b24d;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Imagem do símbolo dentro da célula: mantém proporção */
+.cell img.symbol {
+  width: 86%;
+  height: 200px;
+  max-height: 90%;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+}
+
+/* divisores verticais entre colunas */
+.slot-grid::after {
+  content: "";
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  pointer-events: none;
+  left: calc(66.666%);
+  transform: translateX(-1px);
+}
+
+/* colunas caça niqueis*/
+.slot-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.06);
+  height: 200%;
+  position: relative;
+  margin-top: -90px;
+}
+
+.slot-column .cell {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  height: 200px;
+  box-sizing: border-box;
+  margin-top: -10px;
+}
+
+/* animação caça niqueis */
+.reel-track {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: visible;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.reel-track.spinning {
+  animation-name: reelScroll;
+  animation-iteration-count: 1;
+  animation-timing-function: cubic-bezier(.22, .9, .31, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes reelScroll {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+.slot-column.spinning {
+  overflow: hidden;
+}
+
+/* controles */
+.controls-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.controls-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/*quadrado da moeda*/
+.coin-box {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.12));
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  outline: 1px solid rgba(245, 140, 2, 0.877);
+  border-radius: 10px;
+  min-width: 120px;
+  padding: 10px 14px;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.coin-ico {
+  font-size: 20px;
+}
+
+.coin-line {
+  border-right: solid rgba(247, 151, 26, 0.651);
+  height: auto;
+  overflow: visible;
+}
+
+
+.coin-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/* quadrado de ganhos */
+.gain-box {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.12));
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  outline: 1px solid rgba(245, 140, 2, 0.877);
+  border-radius: 10px;
+  min-width: 120px;
+  padding: 10px 14px;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gain-label {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.gain-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/*quadrado sobre os ganhos*/
+.bet-label {
+  font-size: 17px;
+  font-weight: 700;
+  color: #ffa723;
+  border: 2px solid rgba(247, 151, 26, 0.651);
+  background: rgba(0, 0, 0, 0.15);
+  padding: 10px 24px;
+  border-radius: 5px;
+  margin-right: 80px
+}
+
+.main-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+}
+
+.pill-btn {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.12));
+  color: #ffa723;
+  border-radius: 10px;
+  padding: 10px 14px;
+  border: none;
+  font-weight: 800;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.pill-play {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.12));
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.45);
+  color: #ffa723;
+  padding: 16px 36px;
+  font-weight: 900;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.pill-play:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* pequena melhoria visual quando ganha */
+.slot-grid.win .cell {
+  transition: transform 220ms, box-shadow 220ms;
+}
+
+.slot-grid.win .cell.winner {
+  transform: scale(1.06);
+  box-shadow: 0 18px 30px rgba(255, 178, 77, 0.16);
+  outline: 2px solid rgba(255, 178, 77, 0.12);
+}
