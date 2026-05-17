@@ -29,31 +29,6 @@ A aplicação busca proporcionar uma experiência recreativa e, ao mesmo tempo, 
 
 ---
 
-## 📊 Análise de Dados
-
-Os dados são coletados e **anonimizados** para fins de pesquisa, sendo utilizados para identificar:  
-
-- Padrões de **compulsão e persistência**.  
-- Respostas emocionais e cognitivas sob **estresse e escassez de recursos**.  
-- Diferenças entre **comportamento recreativo e compulsivo**.  
-
----
-
-## 🧩 Casos de Uso Previstos
-
-| Caso de Uso | Descrição |
-|--------------|-----------|
-| `consultarSaldo` | Exibe o saldo atual de moedas virtuais do usuário. |
-| `criarCadastro` | Registra um novo usuário na plataforma. |
-| `aumentarSaldo` | Adiciona moedas virtuais (recompensas). |
-| `diminuirSaldo` | Deduz moedas após apostas ou partidas. |
-| `fazerLogin` | Autentica o usuário e inicia sessão. |
-| `fazerLogout` | Encerra a sessão atual. |
-| `girarRoleta` | Executa um minigame recreativo baseado em sorte. |
-| `realizarPuzzleParaSaldoExtra` | Desafio estressante para obter saldo adicional. |
-
----
-
 ## 🛠 Tecnologias Utilizadas
 
 | Camada | Tecnologia |
@@ -85,7 +60,6 @@ Os dados são coletados e **anonimizados** para fins de pesquisa, sendo utilizad
    - Encerrar sessão, ou  
    - Jogar um minigame estressante para ganhar mais moedas.  
 6. Retorno ao ciclo recreativo.  
-7. Registro e anonimização dos dados comportamentais.  
 
 ---
 
@@ -93,15 +67,7 @@ Os dados são coletados e **anonimizados** para fins de pesquisa, sendo utilizad
 
 - Apoiar a **redução de danos** causados pelo vício em jogos.  
 - Oferecer um **ambiente recreativo e educativo**.  
-- Criar uma **base de dados relevante para pesquisas científicas**.  
 - Estimular **reflexão e autoconsciência** sobre o comportamento em jogos.  
-
----
-
-## 🚧 Status do Projeto
-
-📍 **Em desenvolvimento.**  
-Protótipos das interfaces e primeiros testes de coleta de dados comportamentais estão em andamento.  
 
 ---
 
